@@ -15,6 +15,14 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+    public User userLogin(String email, String password) {
+        User user = userRepository.findByEmailIgnoreCase(email);
+        if (user != null && user.getPassword().equals(password)) {
+            return user;
+        }
+        return null;
+    }
+
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }

@@ -5,6 +5,9 @@ import com.ra.chatapplication.model.User;
 import java.util.List;
 
 public interface UserService {
+
+    User userLogin(String email, String password);
+
     List<User> getAllUsers();
 
     List<User> getAllDeactivatedUsers();
