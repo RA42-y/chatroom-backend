@@ -9,7 +9,6 @@
     <title>Login Page</title>
     <link rel="stylesheet" th:href="@{https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css}"/>
-    <!--    <link rel="stylesheet" href="/css/chat.css">-->
 </head>
 <body>
 
@@ -31,6 +30,18 @@
             <button type="submit" class="btn btn-primary" style="display: block; margin: 0 auto;">Login</button>
         </form>
     </div>
+</div>
+
+<div th:fragment="footer">
+    <footer>
+        <div class="container-fluid bg-light fixed-bottom">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <p>SR03 P23 - Chatroom - Jieni YU & Zhuzexuan SHI</p>
+                </div>
+            </div>
+        </div>
+    </footer>
 </div>
 
 </body>
