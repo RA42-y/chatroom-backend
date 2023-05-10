@@ -8,6 +8,19 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, Long> {
+
+
+    List<User> findByActiveTrue();
+
+    List<User> findByActiveFalse();
+
+    List<User> findByFirstNameContainingIgnoreCase(String firstName);
+
+    List<User> findByLastNameContainingIgnoreCase(String lastName);
+
+    User findByEmailIgnoreCase(String email);
+
+
     // Requete generee automatiquement par Spring
     User findByEmailAndPassword(@Param("email") String email, @Param("password") String password);
 

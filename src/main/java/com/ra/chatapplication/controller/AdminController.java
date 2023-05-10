@@ -7,13 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.context.request.WebRequest;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * URL de base du endpoint : http://localhost:8080/admin<br>
@@ -25,11 +21,19 @@ public class AdminController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping("users")
+    @GetMapping("user-list")
     public String getUserList(Model model) {
         List<User> users = userRepository.findAll();
         model.addAttribute("users", users);
 
-        return "user_list";
+        return "admin/user-list";
+    }
+
+    @GetMapping("deactivated-user-list")
+    public String getDeactivatedUserList(Model model) {
+        List<User> users = userRepository.findAll();
+        model.addAttribute("users", users);
+
+        return "admin/deactivated-user-list";
     }
 }
