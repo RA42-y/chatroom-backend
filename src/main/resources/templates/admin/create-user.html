@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      xmlns="http://www.w3.org/1999/xhtml" th:decorate="layout.html">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Create User</title>
+    <link rel="stylesheet" th:href="@{https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css}"/>
+</head>
+<body>
+<div th:replace="admin/layout::navbar"></div>
+
+<div class="container-fluid mt-4">
+    <div class="container">
+        <h1>Create new user</h1>
+        <form th:action="@{/users}" method="post" th:object="${user}">
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <input type="email" class="form-control" id="email" name="email" th:field="${user.email}" required/>
+                <span th:if="${#fields.hasErrors('email')}" th:errors="${user.email}"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Créer l'utilisateur</button>
+        </form>
+    </div>
+</div>
+
+<div th:replace="admin/layout::footer"></div>
+
+</body>
+</html>
