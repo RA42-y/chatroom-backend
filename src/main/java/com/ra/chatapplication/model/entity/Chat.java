@@ -1,9 +1,8 @@
-package com.ra.chatapplication.model;
+package com.ra.chatapplication.model.entity;
 
 import lombok.Data;
 import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.io.Serializable;

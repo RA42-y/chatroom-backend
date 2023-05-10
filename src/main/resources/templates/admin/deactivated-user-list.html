@@ -10,6 +10,7 @@
 <div th:replace="admin/layout::navbar"></div>
 
 <div class="container-fluid mt-4">
+    <div th:replace="admin/layout::aside"></div>
     <div class="container">
         <h1>Deactivated user list</h1>
         <hr/>
@@ -42,12 +43,12 @@
                 <td><span th:text="${user.lastName}"></span></td>
                 <td><span th:text="${user.firstName}"></span></td>
                 <td><span th:text="${user.email}"></span></td>
-                <td><span th:text="${user.admin}"></span></td>
+                <td><span th:text="${user.admin ? 'admin' : 'user'}"></span></td>
                 <td>
                     <div class="btn-group">
                         <button type="button" class="btn btn-primary">Activate</button>
                         <button type="button" class="btn btn-danger">Delete</button>
-                        <button type="button" class="btn btn-warning">Edit</button>
+                        <button type="button" class="btn btn-info">Edit</button>
                     </div>
                 </td>
             </tr>

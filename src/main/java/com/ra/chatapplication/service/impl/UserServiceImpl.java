@@ -2,8 +2,9 @@ package com.ra.chatapplication.service.impl;
 
 import com.ra.chatapplication.service.UserService;
 
-import com.ra.chatapplication.model.User;
+import com.ra.chatapplication.model.entity.User;
 import com.ra.chatapplication.dao.UserRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,6 +53,11 @@ public class UserServiceImpl implements UserService {
     }
 
     public User findUserByEmail(String email) {
+        return userRepository.findByEmailIgnoreCase(email);
+    }
+
+    public User findCurrentUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByEmailIgnoreCase(email);
     }
 

@@ -1,7 +1,9 @@
 package com.ra.chatapplication.controller;
 
 
-import com.ra.chatapplication.model.User;
+import com.ra.chatapplication.model.entity.User;
+import com.ra.chatapplication.model.request.UserLoginRequest;
+import com.ra.chatapplication.model.request.UserResetPasswordRequest;
 import com.ra.chatapplication.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * URL de base du endpoint : http://localhost:8080/admin<br>
@@ -25,21 +26,57 @@ public class LoginController {
 
     @GetMapping
     public String getLogin(Model model) {
-        model.addAttribute("user", new User());
-        return "login";
+        model.addAttribute("userLoginRequest", new UserLoginRequest());
+        return "login/login";
     }
 
-    @PostMapping
-    public String postLogin(@ModelAttribute User user, Model model) {
+    @PostMapping("check")
+    public String postCheckLogin(@ModelAttribute UserLoginRequest userLoginRequest, Model model) {
 
-        User loggedUser = userService.userLogin(user.getEmail(), user.getPassword());
+        System.out.println(userLoginRequest.getEmail());
+        System.out.println(userLoginRequest.getPassword());
 
-        if (loggedUser != null && loggedUser.isAdmin()){
+        User loggedUser = userService.userLogin(userLoginRequest.getEmail(), userLoginRequest.getPassword());
+
+        System.out.println(loggedUser.getEmail());
+
+        if (loggedUser != null && loggedUser.isAdmin()) {
+            if (loggedUser.isFirstLogin()) {
+                model.addAttribute("user", loggedUser);
+                return "redirect:/login/reset-password";
+            }
+
             return "redirect:/admin/user-list";
-        }
-        else{
+        } else {
             model.addAttribute("invalid", true);
-            return "login";
+            return "login/login";
         }
     }
+
+    @GetMapping("reset-password")
+    public String getResetPassword(@ModelAttribute User user, Model model) {
+        System.out.println(user.getEmail());
+        model.addAttribute("userResetPasswordRequest", new UserResetPasswordRequest());
+        model.addAttribute("email", user.getEmail());
+        return "login/reset-password";
+    }
+
+    @PostMapping("reset-password")
+    public String postResetPassword(@ModelAttribute UserResetPasswordRequest userResetPasswordRequest, Model model) {
+        System.out.println(userResetPasswordRequest.getEmail());
+        System.out.println(userResetPasswordRequest.getPasswordNew());
+        System.out.println(userResetPasswordRequest.getPasswordValidation());
+
+        if (userResetPasswordRequest.getPasswordNew().equals(userResetPasswordRequest.getPasswordValidation())) {
+            User user = userService.findUserByEmail(userResetPasswordRequest.getEmail());
+            user.setPassword(userResetPasswordRequest.getPasswordNew());
+            user.setFirstLogin(false);
+            return "redirect:/admin/user-list";
+        } else {
+            model.addAttribute("invalid", true);
+            return "login/reset-password";
+        }
+
+    }
+
 }

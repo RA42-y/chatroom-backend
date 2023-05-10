@@ -1,14 +1,25 @@
-package com.ra.chatapplication.model;
+package com.ra.chatapplication.model.entity;
+
+import lombok.Data;
+import lombok.ToString;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
+@Data
+@ToString
 @Table(name = "user")
-public class User implements Serializable {
+public class User implements Serializable, UserDetails {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long id;
@@ -36,6 +47,12 @@ public class User implements Serializable {
     @Column
     private Boolean active = true;
 
+    @Column
+    private Boolean firstLogin = true;
+
+    @Column
+    private Integer failureTimes = 0;
+
     public User(){}
 
     public User(long id) {
@@ -52,6 +69,11 @@ public class User implements Serializable {
         this.email = email;
         this.password = password;
         this.admin = admin;
+    }
+
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
     }
 
     public long getId() {
@@ -86,8 +108,44 @@ public class User implements Serializable {
         this.email = mail;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        if (this.getAdmin()) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        } else {
+            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        }
+        return authorities;
+    }
+
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
     }
 
     public void setPassword(String password) {
@@ -100,6 +158,22 @@ public class User implements Serializable {
 
     public void setAdmin(boolean admin) {
         this.admin = admin;
+    }
+
+    public boolean isFirstLogin() {
+        return firstLogin;
+    }
+
+    public void setFirstLogin(Boolean firstLogin) {
+        this.firstLogin = firstLogin;
+    }
+
+    public Integer getFailureTimes() {
+        return failureTimes;
+    }
+
+    public void setFailureTimes(Integer failureTimes) {
+        this.failureTimes = failureTimes;
     }
 }
 

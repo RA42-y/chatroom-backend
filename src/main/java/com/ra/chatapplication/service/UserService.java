@@ -1,6 +1,6 @@
 package com.ra.chatapplication.service;
 
-import com.ra.chatapplication.model.User;
+import com.ra.chatapplication.model.entity.User;
 
 import java.util.List;
 
@@ -23,4 +23,6 @@ public interface UserService {
     List<User> findUsersByLastName(String lastName);
 
     User findUserByEmail(String email);
+
+    User findCurrentUser();
 }

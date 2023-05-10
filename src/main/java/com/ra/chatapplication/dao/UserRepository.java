@@ -1,14 +1,14 @@
 package com.ra.chatapplication.dao;
 
-import com.ra.chatapplication.model.User;
+import com.ra.chatapplication.model.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-
 
     List<User> findByActiveTrue();
 
@@ -20,8 +20,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByEmailIgnoreCase(String email);
 
+//    User findCurrentUser();
 
-    // Requete generee automatiquement par Spring
     User findByEmailAndPassword(@Param("email") String email, @Param("password") String password);
 
 //    // Requete creee manuellement
