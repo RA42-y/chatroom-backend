@@ -1,0 +1,68 @@
+html{
+    height: 100%;
+    width: 100%;
+}
+
+body{
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/***********************************************/
+/* LOGIN */
+/***********************************************/
+.login-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.login-container > form{
+    height: 275px;
+    width: 350px;
+    border: 1px solid #ccc;
+    padding: 12px;
+}
+
+.login-container > form > label, .login-container > form > input{
+    display: block;
+}
+
+/***********************************************/
+/* LAYOUT */
+/***********************************************/
+header, footer{
+    height: 5%;
+    background-color: #184e5b;
+    color: #fff;
+}
+
+nav{
+    height: 8%;
+    background-color: #7da7ad;
+}
+
+.content{
+    display: flex;
+    height: 82%;
+    width: 100%;
+}
+
+aside{
+    width: 20%;
+}
+
+main{
+    width: 80%;
+}
+
+/***********************************************/
+/* BOOTSTRAP OVERRIDE */
+/***********************************************/
+.navbar-brand, .nav-link {
+    color: #fff;
+}
+
