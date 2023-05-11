@@ -12,8 +12,15 @@
 </head>
 <body>
 
+<!--<div th:if="${logout}" class="alert alert-success alert-dismissible fade show" role="alert">-->
+<!--    You have successfully logged out!-->
+<!--    <button type="button" class="close" data-dismiss="alert" aria-label="Close">-->
+<!--        <span aria-hidden="true">&times;</span>-->
+<!--    </button>-->
+<!--</div>-->
+
 <div class="container-fluid" style="margin-top: 10em">
-    <div class="container" style="width: 25em">
+    <div class="container" style="width: 30em">
         <h1 style="margin: 0 auto; text-align: center">Login Page</h1>
 
         <form th:action="@{/login/check}" th:object="${userLoginRequest}" method="post" style="margin-top: 2em">
@@ -23,11 +30,11 @@
             </div>
             <div class="form-group">
                 <label for="password">Password:</label>
-<!--                <input type="password" class="form-control" id="password" name="password" th:field="*{password}" required>-->
                 <input type="password" id="password" name="password" th:field="*{password}"
                        th:class="'form-control' + ${invalid != null && invalid ? ' is-invalid' : ''}" required>
                 <div class="invalid-feedback">Incorrect email or password</div>
             </div>
+            <br>
             <button type="submit" class="btn btn-primary" style="display: block; margin: 0 auto;">Login</button>
         </form>
     </div>

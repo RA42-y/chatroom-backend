@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 
 /**
  * URL de base du endpoint : http://localhost:8080/admin<br>
@@ -32,7 +33,7 @@ public class LoginController {
     }
 
     @PostMapping("check")
-    public String postCheckLogin(@ModelAttribute("userLoginRequest") UserLoginRequest userLoginRequest, Model model, RedirectAttributes ra) {
+    public String postCheckLogin(@ModelAttribute UserLoginRequest userLoginRequest, Model model, RedirectAttributes ra, HttpSession session) {
 
         System.out.println(userLoginRequest.getEmail());
         System.out.println(userLoginRequest.getPassword());
@@ -40,9 +41,11 @@ public class LoginController {
         User user = userService.userLogin(userLoginRequest.getEmail(), userLoginRequest.getPassword());
 
         if (user != null && user.isAdmin()){
+            session.setAttribute("loginAdminEmail", user.getEmail());
+            session.setAttribute("loginAdminFirstName", user.getFirstName());
+            session.setAttribute("loginAdminLastName", user.getLastName());
             if (user.isFirstLogin()){
                 ra.addFlashAttribute("user", user);
-                ra.addFlashAttribute("firstlogin", true);
                 return "redirect:/login/reset-password";
             }
 
@@ -55,24 +58,33 @@ public class LoginController {
     }
 
     @GetMapping("reset-password")
-    public String getResetPassword(@ModelAttribute("user") User user, Model model) {
+    public String getResetPassword(@ModelAttribute User user, Model model) {
         System.out.println(user.getEmail());
+        if (user.isFirstLogin()) {
+            model.addAttribute("firstLogin", true);
+        }
         model.addAttribute("userResetPasswordRequest", new UserResetPasswordRequest(user.getEmail()));
         return "login/reset-password";
     }
 
     @PostMapping("reset-password")
-    public String postResetPassword(@ModelAttribute("userResetPasswordRequest") UserResetPasswordRequest userResetPasswordRequest, Model model) {
+    public String postResetPassword(@ModelAttribute UserResetPasswordRequest userResetPasswordRequest, Model model) {
         if (userResetPasswordRequest.getPasswordNew().equals(userResetPasswordRequest.getPasswordValidation())){
             User user = userService.findUserByEmail(userResetPasswordRequest.getEmail());
             user.setPassword(userResetPasswordRequest.getPasswordNew());
             user.setFirstLogin(false);
+            userService.editUser(user);
             return "redirect:/admin/user-list";
         } else{
             model.addAttribute("invalid", true);
             return "login/reset-password";
         }
+    }
 
+    @GetMapping("/logout")
+    public String getLogout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/login";
     }
 
 }

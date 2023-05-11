@@ -11,9 +11,9 @@
 <body>
 <div th:replace="admin/layout::navbar"></div>
 
-<div class="container-fluid mt-4">
-    <div th:replace="admin/layout::aside"></div>
-    <div class="container">
+<div class="container-fluid mt-4" style="display: flex">
+    <aside th:replace="admin/layout::aside"></aside>
+    <main class="col-md-9">
         <h1>Create new user</h1>
         <form th:action="@{/users}" method="post" th:object="${user}">
             <div class="form-group">
@@ -23,7 +23,7 @@
             </div>
             <button type="submit" class="btn btn-primary">Créer l'utilisateur</button>
         </form>
-    </div>
+    </main>
 </div>
 
 <div th:replace="admin/layout::footer"></div>
