@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 
@@ -31,48 +32,43 @@ public class LoginController {
     }
 
     @PostMapping("check")
-    public String postCheckLogin(@ModelAttribute UserLoginRequest userLoginRequest, Model model) {
+    public String postCheckLogin(@ModelAttribute("userLoginRequest") UserLoginRequest userLoginRequest, Model model, RedirectAttributes ra) {
 
         System.out.println(userLoginRequest.getEmail());
         System.out.println(userLoginRequest.getPassword());
 
-        User loggedUser = userService.userLogin(userLoginRequest.getEmail(), userLoginRequest.getPassword());
+        User user = userService.userLogin(userLoginRequest.getEmail(), userLoginRequest.getPassword());
 
-        System.out.println(loggedUser.getEmail());
-
-        if (loggedUser != null && loggedUser.isAdmin()) {
-            if (loggedUser.isFirstLogin()) {
-                model.addAttribute("user", loggedUser);
+        if (user != null && user.isAdmin()){
+            if (user.isFirstLogin()){
+                ra.addFlashAttribute("user", user);
+                ra.addFlashAttribute("firstlogin", true);
                 return "redirect:/login/reset-password";
             }
 
             return "redirect:/admin/user-list";
-        } else {
+        }
+        else{
             model.addAttribute("invalid", true);
             return "login/login";
         }
     }
 
     @GetMapping("reset-password")
-    public String getResetPassword(@ModelAttribute User user, Model model) {
+    public String getResetPassword(@ModelAttribute("user") User user, Model model) {
         System.out.println(user.getEmail());
-        model.addAttribute("userResetPasswordRequest", new UserResetPasswordRequest());
-        model.addAttribute("email", user.getEmail());
+        model.addAttribute("userResetPasswordRequest", new UserResetPasswordRequest(user.getEmail()));
         return "login/reset-password";
     }
 
     @PostMapping("reset-password")
-    public String postResetPassword(@ModelAttribute UserResetPasswordRequest userResetPasswordRequest, Model model) {
-        System.out.println(userResetPasswordRequest.getEmail());
-        System.out.println(userResetPasswordRequest.getPasswordNew());
-        System.out.println(userResetPasswordRequest.getPasswordValidation());
-
-        if (userResetPasswordRequest.getPasswordNew().equals(userResetPasswordRequest.getPasswordValidation())) {
+    public String postResetPassword(@ModelAttribute("userResetPasswordRequest") UserResetPasswordRequest userResetPasswordRequest, Model model) {
+        if (userResetPasswordRequest.getPasswordNew().equals(userResetPasswordRequest.getPasswordValidation())){
             User user = userService.findUserByEmail(userResetPasswordRequest.getEmail());
             user.setPassword(userResetPasswordRequest.getPasswordNew());
             user.setFirstLogin(false);
             return "redirect:/admin/user-list";
-        } else {
+        } else{
             model.addAttribute("invalid", true);
             return "login/reset-password";
         }

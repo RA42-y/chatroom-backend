@@ -16,7 +16,7 @@
     <div class="container" style="width: 25em">
         <h1 style="margin: 0 auto; text-align: center">Login Page</h1>
 
-        <form th:action="@{login/check}" th:object="${userLoginRequest}" method="post" style="margin-top: 2em">
+        <form th:action="@{/login/check}" th:object="${userLoginRequest}" method="post" style="margin-top: 2em">
             <div class="form-group">
                 <label for="email">Email:</label>
                 <input type="email" class="form-control" id="email" name="email" th:field="*{email}" required>
