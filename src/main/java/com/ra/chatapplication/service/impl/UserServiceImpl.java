@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -40,13 +41,23 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
-    public Page<User> getAllUsersByPage(int pageNumber, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+    public Page<User> getAllUsersByPage(int pageNumber, int pageSize, String sortBy) {
+        Pageable pageable;
+        if(sortBy.equals("")){
+            pageable = PageRequest.of(pageNumber, pageSize);
+        }else{
+            pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy));
+        }
         return userRepository.findAll(pageable);
     }
 
-    public Page<User> getAllDeactivatedUsersByPage(int pageNumber, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+    public Page<User> getAllDeactivatedUsersByPage(int pageNumber, int pageSize, String sortBy) {
+        Pageable pageable;
+        if(sortBy.equals("")){
+            pageable = PageRequest.of(pageNumber, pageSize);
+        }else{
+            pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy));
+        }
         return userRepository.findByActiveFalse(pageable);
     }
 
@@ -86,6 +97,16 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id);
         user.setActive(true);
         return userRepository.save(user);
+    }
+
+    public Page<User> searchUsers(String keyword, int pageNumber, int pageSize, String sortBy) {
+        Pageable pageable;
+        if(sortBy.equals("")){
+            pageable = PageRequest.of(pageNumber, pageSize);
+        }else{
+            pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy));
+        }
+        return userRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(keyword, keyword, keyword, pageable);
     }
 
     public List<User> findUsersByFirstName(String firstName) {

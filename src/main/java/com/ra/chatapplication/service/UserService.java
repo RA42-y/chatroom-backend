@@ -15,9 +15,9 @@ public interface UserService {
 
     List<User> getAllUsers();
 
-    Page<User> getAllUsersByPage(int pageNumber, int pageSize);
+    Page<User> getAllUsersByPage(int pageNumber, int pageSize, String sortBy);
 
-    Page<User> getAllDeactivatedUsersByPage(int pageNumber, int pageSize);
+    Page<User> getAllDeactivatedUsersByPage(int pageNumber, int pageSize, String sortBy);
 
     List<User> getAllDeactivatedUsers();
 
@@ -32,6 +32,8 @@ public interface UserService {
     User deactivateUser(long id);
 
     User activateUser(long id);
+
+    Page<User> searchUsers(String keyword, int pageNumber, int pageSize, String sortBy);
 
     List<User> findUsersByFirstName(String firstName);
 

@@ -32,9 +32,18 @@ public class AdminController {
 //    }
 
     @GetMapping("user-list")
-    public String getUserList(@RequestParam(name = "page", defaultValue = "0") int pageNumber, @RequestParam(name = "size", defaultValue = "7") int pageSize, Model model) {
-        Page<User> users = userService.getAllUsersByPage(pageNumber, pageSize);
+    public String getUserList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, @RequestParam(defaultValue = "") String sortBy, Model model) {
+        Page<User> users = userService.getAllUsersByPage(page, size, sortBy);
         model.addAttribute("users", users);
+        model.addAttribute("sortBy", sortBy);
+        return "admin/user-list";
+    }
+
+    @GetMapping("user-list/search")
+    public String searchUsers(@RequestParam("keyword") String keyword, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, @RequestParam(defaultValue = "") String sortBy, Model model) {
+        Page<User> searchResults = userService.searchUsers(keyword, page, size, sortBy);
+        model.addAttribute("users", searchResults);
+        model.addAttribute("keyword", keyword);
         return "admin/user-list";
     }
 
@@ -46,9 +55,10 @@ public class AdminController {
 //    }
 
     @GetMapping("deactivated-user-list")
-    public String getDeactivatedUserList(@RequestParam(name = "page", defaultValue = "0") int pageNumber, @RequestParam(name = "size", defaultValue = "7") int pageSize, Model model) {
-        Page<User> users = userService.getAllDeactivatedUsersByPage(pageNumber, pageSize);
+    public String getDeactivatedUserList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, @RequestParam(defaultValue = "") String sortBy, Model model) {
+        Page<User> users = userService.getAllDeactivatedUsersByPage(page, size, sortBy);
         model.addAttribute("users", users);
+        model.addAttribute("sortBy", sortBy);
         return "admin/deactivated-user-list";
     }
 

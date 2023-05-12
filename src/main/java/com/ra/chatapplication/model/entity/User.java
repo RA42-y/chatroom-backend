@@ -24,14 +24,14 @@ public class User implements Serializable, UserDetails {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "firstname")
+    @Column(name = "first_name")
     @Size(min = 2)
-    @NotEmpty(message = "firstname obligatoire")
+    @NotEmpty(message = "firstname required")
     private String firstName;
 
-    @Column(name = "lastname")
+    @Column(name = "last_name")
     @Size(min = 2)
-    @NotEmpty(message = "firstname obligatoire")
+    @NotEmpty(message = "lastname required")
     private String lastName;
 
     @Column
@@ -39,6 +39,7 @@ public class User implements Serializable, UserDetails {
     private String email;
 
     @Column
+    @Size(min = 8)
     private String password;
 
     @Column

@@ -29,6 +29,19 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Page<User> findAll(Pageable pageable);
 
+    Page<User> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(String firstName, String lastName, String email, Pageable pageable);
+
+    Page<User> findAllByOrderByFirstNameAsc(Pageable pageable);
+
+    Page<User> findAllByOrderByFirstNameDesc(Pageable pageable);
+
+    Page<User> findAllByOrderByLastNameAsc(Pageable pageable);
+
+    Page<User> findAllByOrderByLastNameDesc(Pageable pageable);
+
+    Page<User> findAllByOrderByEmailAsc(Pageable pageable);
+
+    Page<User> findAllByOrderByEmailDesc(Pageable pageable);
 
 //    User findCurrentUser();
 
