@@ -29,6 +29,10 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    public User getUserById(long id) {
+        return userRepository.findById(id);
+    }
+
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -59,6 +63,18 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 
+    public User deactivateUser(long id) {
+        User user = userRepository.findById(id);
+        user.setActive(false);
+        return userRepository.save(user);
+    }
+
+    public User activateUser(long id) {
+        User user = userRepository.findById(id);
+        user.setActive(true);
+        return userRepository.save(user);
+    }
+
     public List<User> findUsersByFirstName(String firstName) {
         return userRepository.findByFirstNameContainingIgnoreCase(firstName);
     }
@@ -67,7 +83,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByLastNameContainingIgnoreCase(lastName);
     }
 
-    public User findUserByEmail(String email) {
+    public User getUserByEmail(String email) {
         return userRepository.findByEmailIgnoreCase(email);
     }
 

@@ -46,9 +46,12 @@
                 <td><span th:text="${user.admin ? 'admin' : 'user'}"></span></td>
                 <td>
                     <div class="btn-group">
-                        <button type="button" class="btn btn-warning">Deactivate</button>
-                        <button type="button" class="btn btn-danger">Delete</button>
-                        <button type="button" class="btn btn-info">Edit</button>
+                        <a th:href="@{/admin/deactivate-user/{id}(id=${user.id})}"
+                           class="btn btn-warning">Deactivate</a>
+                        <a th:href="@{/admin/delete-user/{id}(id=${user.id})}"
+                           class="btn btn-danger">Delete</a>
+                        <a th:href="@{/admin/edit-user/{id}(id=${user.id})}"
+                           class="btn btn-info">Edit</a>
                     </div>
                 </td>
             </tr>

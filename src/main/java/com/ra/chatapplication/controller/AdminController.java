@@ -3,13 +3,11 @@ package com.ra.chatapplication.controller;
 
 import com.ra.chatapplication.model.entity.User;
 import com.ra.chatapplication.model.request.AdminCreateUserRequest;
+import com.ra.chatapplication.model.request.AdminEditUserRequest;
 import com.ra.chatapplication.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
@@ -61,5 +59,47 @@ public class AdminController {
 
         return "redirect:/admin/user-list";
     }
+
+    @GetMapping("deactivate-user/{id}")
+    public String getDeactivateUser(@PathVariable("id") long userID) {
+        userService.deactivateUser(userID);
+        return "redirect:/admin/user-list";
+    }
+
+    @GetMapping("activate-user/{id}")
+    public String getActivateUser(@PathVariable("id") long userID) {
+        userService.activateUser(userID);
+        return "redirect:/admin/user-list";
+    }
+
+    @GetMapping("delete-user/{id}")
+    public String getDeleteUser(@PathVariable("id") long userID) {
+        userService.deleteUser(userID);
+        return "redirect:/admin/user-list";
+    }
+
+    @GetMapping("edit-user/{id}")
+    public String getEditUser(@PathVariable("id") long userID, Model model) {
+        User user = userService.getUserById(userID);
+        AdminEditUserRequest adminEditUserRequest = new AdminEditUserRequest(user.getEmail(), user.getFirstName(), user.getLastName(), user.getAdmin());
+        model.addAttribute("adminEditUserRequest", adminEditUserRequest);
+        model.addAttribute("user", user);
+        return "admin/edit-user";
+    }
+
+    @PostMapping("edit-user/{id}")
+    public String postEditUser(@PathVariable("id") long userID, @ModelAttribute AdminEditUserRequest adminEditUserRequest) {
+        User user = userService.getUserById(userID);
+
+        user.setEmail(adminEditUserRequest.getEmail());
+        user.setFirstName(adminEditUserRequest.getFirstName());
+        user.setLastName(adminEditUserRequest.getLastName());
+        user.setAdmin(adminEditUserRequest.getAdmin());
+
+        user = userService.editUser(user);
+
+        return "redirect:/admin/user-list";
+    }
+
 
 }

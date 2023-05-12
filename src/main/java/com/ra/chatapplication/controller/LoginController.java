@@ -69,7 +69,7 @@ public class LoginController {
     @PostMapping("reset-password")
     public String postResetPassword(@ModelAttribute UserResetPasswordRequest userResetPasswordRequest, Model model) {
         if (userResetPasswordRequest.getPasswordNew().equals(userResetPasswordRequest.getPasswordValidation())) {
-            User user = userService.findUserByEmail(userResetPasswordRequest.getEmail());
+            User user = userService.getUserByEmail(userResetPasswordRequest.getEmail());
             user.setPassword(userResetPasswordRequest.getPasswordNew());
             user.setFirstLogin(false);
             userService.editUser(user);

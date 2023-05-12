@@ -9,6 +9,8 @@ public interface UserService {
 
     User userLogin(String email, String password);
 
+    User getUserById(long id);
+
     List<User> getAllUsers();
 
     List<User> getAllDeactivatedUsers();
@@ -21,11 +23,15 @@ public interface UserService {
 
     void deleteUser(long id);
 
+    User deactivateUser(long id);
+
+    User activateUser(long id);
+
     List<User> findUsersByFirstName(String firstName);
 
     List<User> findUsersByLastName(String lastName);
 
-    User findUserByEmail(String email);
+    User getUserByEmail(String email);
 
     User findCurrentUser();
 }

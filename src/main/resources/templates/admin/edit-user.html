@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      xmlns="http://www.w3.org/1999/xhtml" th:decorate="layout.html">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Edit User</title>
+    <link rel="stylesheet" th:href="@{https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css}"/>
+</head>
+<body>
+<div th:replace="admin/layout::navbar"></div>
+
+<div class="container-fluid mt-4" style="display: flex">
+    <aside th:replace="admin/layout::aside"></aside>
+    <main class="col-md-9">
+        <h1>Edit user</h1>
+        <hr/>
+        <form class="col-md-5" th:action="@{/admin/edit-user/{id}(id=${user.id})}" method="post" th:object="${adminEditUserRequest}">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" id="email" name="email" th:field="*{email}"
+                       th:value="${user.email}" required>
+            </div>
+            <div class="form-group">
+                <label for="first-name">First name:</label>
+                <input type="text" class="form-control" id="first-name" name="first-name" th:field="*{firstName}" th:value="${user.firstName}"
+                       required>
+            </div>
+            <div class="form-group">
+                <label for="last-name">Last name:</label>
+                <input type="text" class="form-control" id="last-name" name="last-name" th:field="*{lastName}" th:value="${user.lastName}" required>
+            </div>
+            <div class="form-group">
+                <label>Admin:</label>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="admin" id="admin-true" value="true"
+                                   th:field="*{admin}" th:checked="${user.admin}">
+                            <label class="form-check-label" for="admin-true">Yes</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="admin" id="admin-false" value="false"
+                                   th:field="*{admin}" th:checked="${!user.admin}">
+                            <label class="form-check-label" for="admin-false">No</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </main>
+</div>
+
+<div th:replace="admin/layout::footer"></div>
+
+</body>
+</html>
