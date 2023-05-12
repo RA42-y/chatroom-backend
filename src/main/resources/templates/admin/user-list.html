@@ -16,15 +16,18 @@
         <hr/>
         <div class="row">
             <div class="col-md-6">
-                <input type="text" class="form-control mb-2 mr-sm-2" placeholder="Search"/>
-            </div>
-            <div class="col-md-6">
                 <select class="form-control mb-2 mr-sm-2" onchange="location.href=this.value;">
                     <option value="?sortBy=" th:selected="${sortBy == ''}">Sort by</option>
                     <option value="?sortBy=firstName" th:selected="${sortBy == 'firstName'}">First name</option>
                     <option value="?sortBy=lastName" th:selected="${sortBy == 'lastName'}">Last name</option>
                     <option value="?sortBy=email" th:selected="${sortBy == 'email'}">Email</option>
                 </select>
+            </div>
+            <div class="col-md-6">
+                <form th:action="@{${#httpServletRequest.requestURI}(page=0, size=${users.size}, sortBy=${sortBy}, keyword=${keyword})}" method="get" style="display: flex">
+                    <input type="text" class="form-control mb-2 mr-sm-2 col-md-10" name="keyword" placeholder="Search" th:value="${param.keyword}"/>
+                    <button type="submit" class="btn btn-primary mb-2">Search</button>
+                </form>
             </div>
         </div>
         <table id="users" class="table table-striped table-bordered">
@@ -67,25 +70,25 @@
             <nav>
                 <ul class="pagination justify-content-center">
                     <li class="page-item" th:classappend="${users.first ? 'disabled' : ''}">
-                        <a class="page-link" th:href="@{${#httpServletRequest.requestURI}(page=0, size=${users.size}, sortBy=${sortBy})}">&laquo;</a>
+                        <a class="page-link" th:href="@{${#httpServletRequest.requestURI}(page=0, size=${users.size}, sortBy=${sortBy}, keyword=${keyword})}">&laquo;</a>
                     </li>
                     <li class="page-item" th:classappend="${users.first ? 'disabled' : ''}">
                         <a class="page-link"
-                           th:href="@{${#httpServletRequest.requestURI}(page=${users.number - 1}, size=${users.size}, sortBy=${sortBy})}">&lsaquo;</a>
+                           th:href="@{${#httpServletRequest.requestURI}(page=${users.number - 1}, size=${users.size}, sortBy=${sortBy}, keyword=${keyword})}">&lsaquo;</a>
                     </li>
                     <li th:each="i : ${#numbers.sequence(0, users.totalPages - 1)}" class="page-item"
                         th:classappend="${i == users.number ? 'active' : ''}">
                         <a class="page-link"
-                           th:href="@{${#httpServletRequest.requestURI}(page=${i}, size=${users.size}, sortBy=${sortBy})}"
+                           th:href="@{${#httpServletRequest.requestURI}(page=${i}, size=${users.size}, sortBy=${sortBy}, keyword=${keyword})}"
                            th:text="${i + 1}"></a>
                     </li>
                     <li class="page-item" th:classappend="${users.last ? 'disabled' : ''}">
                         <a class="page-link"
-                           th:href="@{${#httpServletRequest.requestURI}(page=${users.number + 1}, size=${users.size}, sortBy=${sortBy})}">&rsaquo;</a>
+                           th:href="@{${#httpServletRequest.requestURI}(page=${users.number + 1}, size=${users.size}, sortBy=${sortBy}, keyword=${keyword})}">&rsaquo;</a>
                     </li>
                     <li class="page-item" th:classappend="${users.last ? 'disabled' : ''}">
                         <a class="page-link"
-                           th:href="@{${#httpServletRequest.requestURI}(page=${users.totalPages - 1}, size=${users.size}, sortBy=${sortBy})}">&raquo;</a>
+                           th:href="@{${#httpServletRequest.requestURI}(page=${users.totalPages - 1}, size=${users.size}, sortBy=${sortBy}, keyword=${keyword})}">&raquo;</a>
                     </li>
                 </ul>
             </nav>

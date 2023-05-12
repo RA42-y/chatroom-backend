@@ -35,6 +35,8 @@ public interface UserService {
 
     Page<User> searchUsers(String keyword, int pageNumber, int pageSize, String sortBy);
 
+    Page<User> searchDeactivatedUsers(String keyword, int pageNumber, int pageSize, String sortBy);
+
     List<User> findUsersByFirstName(String firstName);
 
     List<User> findUsersByLastName(String lastName);

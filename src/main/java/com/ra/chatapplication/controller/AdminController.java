@@ -32,17 +32,15 @@ public class AdminController {
 //    }
 
     @GetMapping("user-list")
-    public String getUserList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, @RequestParam(defaultValue = "") String sortBy, Model model) {
-        Page<User> users = userService.getAllUsersByPage(page, size, sortBy);
-        model.addAttribute("users", users);
+    public String getUserList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, @RequestParam(defaultValue = "") String sortBy, @RequestParam(defaultValue = "") String keyword, Model model) {
+        if (keyword.equals("")) {
+            Page<User> users = userService.getAllUsersByPage(page, size, sortBy);
+            model.addAttribute("users", users);
+        } else {
+            Page<User> searchResults = userService.searchUsers(keyword, page, size, sortBy);
+            model.addAttribute("users", searchResults);
+        }
         model.addAttribute("sortBy", sortBy);
-        return "admin/user-list";
-    }
-
-    @GetMapping("user-list/search")
-    public String searchUsers(@RequestParam("keyword") String keyword, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, @RequestParam(defaultValue = "") String sortBy, Model model) {
-        Page<User> searchResults = userService.searchUsers(keyword, page, size, sortBy);
-        model.addAttribute("users", searchResults);
         model.addAttribute("keyword", keyword);
         return "admin/user-list";
     }
@@ -55,10 +53,16 @@ public class AdminController {
 //    }
 
     @GetMapping("deactivated-user-list")
-    public String getDeactivatedUserList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, @RequestParam(defaultValue = "") String sortBy, Model model) {
-        Page<User> users = userService.getAllDeactivatedUsersByPage(page, size, sortBy);
-        model.addAttribute("users", users);
+    public String getDeactivatedUserList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, @RequestParam(defaultValue = "") String sortBy, @RequestParam(defaultValue = "") String keyword, Model model) {
+        if (keyword.equals("")) {
+            Page<User> users = userService.getAllDeactivatedUsersByPage(page, size, sortBy);
+            model.addAttribute("users", users);
+        } else {
+            Page<User> searchResults = userService.searchDeactivatedUsers(keyword, page, size, sortBy);
+            model.addAttribute("users", searchResults);
+        }
         model.addAttribute("sortBy", sortBy);
+        model.addAttribute("keyword", keyword);
         return "admin/deactivated-user-list";
     }
 
@@ -94,7 +98,7 @@ public class AdminController {
     @GetMapping("activate-user/{id}")
     public String getActivateUser(@PathVariable("id") long userID) {
         userService.activateUser(userID);
-        return "redirect:/admin/user-list";
+        return "redirect:/admin/deactivated-user-list";
     }
 
     @GetMapping("delete-user/{id}")

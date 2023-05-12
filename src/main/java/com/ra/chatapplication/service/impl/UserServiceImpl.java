@@ -109,6 +109,16 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(keyword, keyword, keyword, pageable);
     }
 
+    public Page<User> searchDeactivatedUsers(String keyword, int pageNumber, int pageSize, String sortBy) {
+        Pageable pageable;
+        if(sortBy.equals("")){
+            pageable = PageRequest.of(pageNumber, pageSize);
+        }else{
+            pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy));
+        }
+        return userRepository.findByFirstNameContainingIgnoreCaseAndActiveFalseOrLastNameContainingIgnoreCaseAndActiveFalseOrEmailContainingIgnoreCaseAndActiveFalse(keyword, keyword, keyword, pageable);
+    }
+
     public List<User> findUsersByFirstName(String firstName) {
         return userRepository.findByFirstNameContainingIgnoreCase(firstName);
     }
