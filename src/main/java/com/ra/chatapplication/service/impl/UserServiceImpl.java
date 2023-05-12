@@ -6,6 +6,9 @@ import com.ra.chatapplication.service.UserService;
 import com.ra.chatapplication.utils.EmailUtils;
 import com.ra.chatapplication.utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +38,16 @@ public class UserServiceImpl implements UserService {
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public Page<User> getAllUsersByPage(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return userRepository.findAll(pageable);
+    }
+
+    public Page<User> getAllDeactivatedUsersByPage(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return userRepository.findByActiveFalse(pageable);
     }
 
     public List<User> getAllDeactivatedUsers() {

@@ -40,7 +40,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="user : ${users}">
+            <tr th:each="user : ${users.content}">
                 <td><span th:text="${user.lastName}"></span></td>
                 <td><span th:text="${user.firstName}"></span></td>
                 <td><span th:text="${user.email}"></span></td>
@@ -61,6 +61,35 @@
             </tr>
             </tbody>
         </table>
+
+        <div th:if="${users.totalPages > 1}" class="text-center mb-lg-5 ">
+            <nav>
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${users.first ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{${#httpServletRequest.requestURI}(page=0, size=${users.size})}">&laquo;</a>
+                    </li>
+                    <li class="page-item" th:classappend="${users.first ? 'disabled' : ''}">
+                        <a class="page-link"
+                           th:href="@{${#httpServletRequest.requestURI}(page=${users.number - 1}, size=${users.size})}">&lsaquo;</a>
+                    </li>
+                    <li th:each="i : ${#numbers.sequence(0, users.totalPages - 1)}" class="page-item"
+                        th:classappend="${i == users.number ? 'active' : ''}">
+                        <a class="page-link"
+                           th:href="@{${#httpServletRequest.requestURI}(page=${i}, size=${users.size})}"
+                           th:text="${i + 1}"></a>
+                    </li>
+                    <li class="page-item" th:classappend="${users.last ? 'disabled' : ''}">
+                        <a class="page-link"
+                           th:href="@{${#httpServletRequest.requestURI}(page=${users.number + 1}, size=${users.size})}">&rsaquo;</a>
+                    </li>
+                    <li class="page-item" th:classappend="${users.last ? 'disabled' : ''}">
+                        <a class="page-link"
+                           th:href="@{${#httpServletRequest.requestURI}(page=${users.totalPages - 1}, size=${users.size})}">&raquo;</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
     </main>
 </div>
 

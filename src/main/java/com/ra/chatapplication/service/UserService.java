@@ -1,6 +1,8 @@
 package com.ra.chatapplication.service;
 
 import com.ra.chatapplication.model.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import javax.mail.MessagingException;
 import java.util.List;
@@ -12,6 +14,10 @@ public interface UserService {
     User getUserById(long id);
 
     List<User> getAllUsers();
+
+    Page<User> getAllUsersByPage(int pageNumber, int pageSize);
+
+    Page<User> getAllDeactivatedUsersByPage(int pageNumber, int pageSize);
 
     List<User> getAllDeactivatedUsers();
 

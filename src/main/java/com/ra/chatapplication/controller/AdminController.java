@@ -5,6 +5,7 @@ import com.ra.chatapplication.model.entity.User;
 import com.ra.chatapplication.model.request.AdminCreateUserRequest;
 import com.ra.chatapplication.model.request.AdminEditUserRequest;
 import com.ra.chatapplication.service.UserService;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,16 +24,30 @@ public class AdminController {
     @Resource
     UserService userService;
 
+//    @GetMapping("user-list")
+//    public String getUserList(Model model) {
+//        List<User> users = userService.getAllUsers();
+//        model.addAttribute("users", users);
+//        return "admin/user-list";
+//    }
+
     @GetMapping("user-list")
-    public String getUserList(Model model) {
-        List<User> users = userService.getAllUsers();
+    public String getUserList(@RequestParam(name = "page", defaultValue = "0") int pageNumber, @RequestParam(name = "size", defaultValue = "7") int pageSize, Model model) {
+        Page<User> users = userService.getAllUsersByPage(pageNumber, pageSize);
         model.addAttribute("users", users);
         return "admin/user-list";
     }
 
+//    @GetMapping("deactivated-user-list")
+//    public String getDeactivatedUserList(Model model) {
+//        List<User> users = userService.getAllDeactivatedUsers();
+//        model.addAttribute("users", users);
+//        return "admin/deactivated-user-list";
+//    }
+
     @GetMapping("deactivated-user-list")
-    public String getDeactivatedUserList(Model model) {
-        List<User> users = userService.getAllDeactivatedUsers();
+    public String getDeactivatedUserList(@RequestParam(name = "page", defaultValue = "0") int pageNumber, @RequestParam(name = "size", defaultValue = "7") int pageSize, Model model) {
+        Page<User> users = userService.getAllDeactivatedUsersByPage(pageNumber, pageSize);
         model.addAttribute("users", users);
         return "admin/deactivated-user-list";
     }
