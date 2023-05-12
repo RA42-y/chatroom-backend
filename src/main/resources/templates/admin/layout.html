@@ -21,13 +21,16 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item" th:classappend="${#httpServletRequest.getRequestURI() == '/admin/user-list' ? 'active' : ''}">
+                <li class="nav-item"
+                    th:classappend="${#httpServletRequest.getRequestURI() == '/admin/user-list' ? 'active' : ''}">
                     <a class="nav-link" href="/admin/user-list">User list</a>
                 </li>
-                <li class="nav-item" th:classappend="${#httpServletRequest.getRequestURI() == '/admin/deactivated-user-list' ? 'active' : ''}">
+                <li class="nav-item"
+                    th:classappend="${#httpServletRequest.getRequestURI() == '/admin/deactivated-user-list' ? 'active' : ''}">
                     <a class="nav-link" href="/admin/deactivated-user-list">Deactivated user list</a>
                 </li>
-                <li class="nav-item" th:classappend="${#httpServletRequest.getRequestURI() == '/admin/create-user' ? 'active' : ''}">
+                <li class="nav-item"
+                    th:classappend="${#httpServletRequest.getRequestURI() == '/admin/create-user' ? 'active' : ''}">
                     <a class="nav-link" href="/admin/create-user">Create new user</a>
                 </li>
             </ul>
@@ -56,8 +59,8 @@
     <footer>
         <div class="container-fluid bg-light fixed-bottom">
             <div class="row">
-                <div class="col-md-12 text-center">
-                    <p>SR03 P23 - Chatroom - Jieni YU & Zhuzexuan SHI</p>
+                <div class="col-md-12 text-center" style="font-size: 0.85em; display: flex; justify-content: center; align-items: center;">
+                    <p style="margin: 0.4em auto;">SR03 P23 - Chatroom - Jieni YU & Zhuzexuan SHI</p>
                 </div>
             </div>
         </div>
