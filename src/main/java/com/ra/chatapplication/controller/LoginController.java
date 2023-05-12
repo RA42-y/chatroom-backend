@@ -40,18 +40,17 @@ public class LoginController {
 
         User user = userService.userLogin(userLoginRequest.getEmail(), userLoginRequest.getPassword());
 
-        if (user != null && user.isAdmin()){
+        if (user != null && user.isAdmin()) {
             session.setAttribute("loginAdminEmail", user.getEmail());
             session.setAttribute("loginAdminFirstName", user.getFirstName());
             session.setAttribute("loginAdminLastName", user.getLastName());
-            if (user.isFirstLogin()){
+            if (user.isFirstLogin()) {
                 ra.addFlashAttribute("user", user);
                 return "redirect:/login/reset-password";
             }
 
             return "redirect:/admin/user-list";
-        }
-        else{
+        } else {
             model.addAttribute("invalid", true);
             return "login/login";
         }
@@ -69,13 +68,13 @@ public class LoginController {
 
     @PostMapping("reset-password")
     public String postResetPassword(@ModelAttribute UserResetPasswordRequest userResetPasswordRequest, Model model) {
-        if (userResetPasswordRequest.getPasswordNew().equals(userResetPasswordRequest.getPasswordValidation())){
+        if (userResetPasswordRequest.getPasswordNew().equals(userResetPasswordRequest.getPasswordValidation())) {
             User user = userService.findUserByEmail(userResetPasswordRequest.getEmail());
             user.setPassword(userResetPasswordRequest.getPasswordNew());
             user.setFirstLogin(false);
             userService.editUser(user);
             return "redirect:/admin/user-list";
-        } else{
+        } else {
             model.addAttribute("invalid", true);
             return "login/reset-password";
         }

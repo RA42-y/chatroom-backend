@@ -4,13 +4,15 @@ package com.ra.chatapplication.controller;
 import com.ra.chatapplication.model.entity.User;
 import com.ra.chatapplication.model.request.AdminCreateUserRequest;
 import com.ra.chatapplication.service.UserService;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
+import javax.mail.MessagingException;
 import java.util.List;
 
 /**
@@ -41,6 +43,23 @@ public class AdminController {
     public String getCreateUser(Model model) {
         model.addAttribute("adminCreateUserRequest", new AdminCreateUserRequest());
         return "admin/create-user";
+    }
+
+    @PostMapping("create-user")
+    public String postCreateUser(@ModelAttribute AdminCreateUserRequest adminCreateUserRequest, Model model) throws MessagingException {
+        String email = adminCreateUserRequest.getEmail();
+        String firstName = adminCreateUserRequest.getFirstName();
+        String lastName = adminCreateUserRequest.getLastName();
+        Boolean admin = adminCreateUserRequest.getAdmin();
+
+        System.out.println(email);
+        System.out.println(firstName);
+        System.out.println(lastName);
+        System.out.println(admin);
+
+        User user = userService.createUserByAdmin(firstName, lastName, email, admin);
+
+        return "redirect:/admin/user-list";
     }
 
 }

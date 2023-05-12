@@ -2,6 +2,7 @@ package com.ra.chatapplication.service;
 
 import com.ra.chatapplication.model.entity.User;
 
+import javax.mail.MessagingException;
 import java.util.List;
 
 public interface UserService {
@@ -13,6 +14,8 @@ public interface UserService {
     List<User> getAllDeactivatedUsers();
 
     User createUser(User user);
+
+    User createUserByAdmin(String firstName, String lastName, String email, Boolean admin) throws MessagingException;
 
     User editUser(User user);
 
