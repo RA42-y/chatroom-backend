@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -98,7 +99,7 @@ public class AdminController {
     @GetMapping("activate-user/{id}")
     public String getActivateUser(@PathVariable("id") long userID) {
         userService.activateUser(userID);
-        return "redirect:/admin/deactivated-user-list";
+        return "redirect:/admin/user-list";
     }
 
     @GetMapping("delete-user/{id}")

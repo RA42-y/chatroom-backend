@@ -5,96 +5,14 @@
     <title>Admin - User List</title>
     <link rel="stylesheet" th:href="@{https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
 </head>
 <body>
 <div th:replace="admin/layout::navbar"></div>
 
 <div class="container-fluid mt-4" style="display: flex">
     <aside th:replace="admin/layout::aside"></aside>
-    <main class="col-md-9">
-        <h1>User list</h1>
-        <hr/>
-        <div class="row">
-            <div class="col-md-6">
-                <select class="form-control mb-2 mr-sm-2" onchange="location.href=this.value;">
-                    <option value="?sortBy=" th:selected="${sortBy == ''}">Sort by</option>
-                    <option value="?sortBy=firstName" th:selected="${sortBy == 'firstName'}">First name</option>
-                    <option value="?sortBy=lastName" th:selected="${sortBy == 'lastName'}">Last name</option>
-                    <option value="?sortBy=email" th:selected="${sortBy == 'email'}">Email</option>
-                </select>
-            </div>
-            <div class="col-md-6">
-                <form th:action="@{${#httpServletRequest.requestURI}(page=0, size=${users.size}, sortBy=${sortBy}, keyword=${keyword})}" method="get" style="display: flex">
-                    <input type="text" class="form-control mb-2 mr-sm-2 col-md-10" name="keyword" placeholder="Search" th:value="${param.keyword}"/>
-                    <button type="submit" class="btn btn-primary mb-2">Search</button>
-                </form>
-            </div>
-        </div>
-        <table id="users" class="table table-striped table-bordered">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>First name</th>
-                <th>Last name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>State</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="user : ${users.content}">
-                <td><span th:text="${user.id}"></span></td>
-                <td><span th:text="${user.firstName}"></span></td>
-                <td><span th:text="${user.lastName}"></span></td>
-                <td><span th:text="${user.email}"></span></td>
-                <td><span th:text="${user.admin ? 'Admin' : 'User'}"></span></td>
-                <td><span th:text="${user.active ? 'Activated' : 'Deactivated'}"></span></td>
-                <td>
-                    <div class="btn-group">
-                        <a th:href="@{/admin/edit-user/{id}(id=${user.id})}"
-                           class="btn btn-info">Edit</a>
-                        <a th:href="@{/admin/delete-user/{id}(id=${user.id})}"
-                           class="btn btn-danger">Delete</a>
-                        <a th:href="@{/admin/deactivate-user/{id}(id=${user.id})}"
-                           class="btn btn-warning" th:if="${user.active}">Deactivate</a>
-                        <a th:href="@{/admin/activate-user/{id}(id=${user.id})}"
-                           class="btn btn-success" th:if="${!user.active}">Activate</a>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-
-        <div th:if="${users.totalPages > 1}" class="text-center mb-lg-5 ">
-            <nav>
-                <ul class="pagination justify-content-center">
-                    <li class="page-item" th:classappend="${users.first ? 'disabled' : ''}">
-                        <a class="page-link" th:href="@{${#httpServletRequest.requestURI}(page=0, size=${users.size}, sortBy=${sortBy}, keyword=${keyword})}">&laquo;</a>
-                    </li>
-                    <li class="page-item" th:classappend="${users.first ? 'disabled' : ''}">
-                        <a class="page-link"
-                           th:href="@{${#httpServletRequest.requestURI}(page=${users.number - 1}, size=${users.size}, sortBy=${sortBy}, keyword=${keyword})}">&lsaquo;</a>
-                    </li>
-                    <li th:each="i : ${#numbers.sequence(0, users.totalPages - 1)}" class="page-item"
-                        th:classappend="${i == users.number ? 'active' : ''}">
-                        <a class="page-link"
-                           th:href="@{${#httpServletRequest.requestURI}(page=${i}, size=${users.size}, sortBy=${sortBy}, keyword=${keyword})}"
-                           th:text="${i + 1}"></a>
-                    </li>
-                    <li class="page-item" th:classappend="${users.last ? 'disabled' : ''}">
-                        <a class="page-link"
-                           th:href="@{${#httpServletRequest.requestURI}(page=${users.number + 1}, size=${users.size}, sortBy=${sortBy}, keyword=${keyword})}">&rsaquo;</a>
-                    </li>
-                    <li class="page-item" th:classappend="${users.last ? 'disabled' : ''}">
-                        <a class="page-link"
-                           th:href="@{${#httpServletRequest.requestURI}(page=${users.totalPages - 1}, size=${users.size}, sortBy=${sortBy}, keyword=${keyword})}">&raquo;</a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-
-    </main>
+    <main class="col-md-9" th:replace="admin/layout::user-list('User List')"></main>
 </div>
 
 <div th:replace="admin/layout::footer"></div>
