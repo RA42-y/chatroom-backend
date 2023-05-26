@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import static com.ra.chatapplication.constant.UserConstant.USER_LOGIN_STATE;
 
 /**
  * URL de base du endpoint : http://localhost:8080/admin<br>
@@ -33,12 +36,12 @@ public class LoginController {
     }
 
     @PostMapping("check")
-    public String postCheckLogin(@ModelAttribute UserLoginRequest userLoginRequest, Model model, RedirectAttributes ra, HttpSession session) {
+    public String postCheckLogin(@ModelAttribute UserLoginRequest userLoginRequest, Model model, RedirectAttributes ra, HttpSession session, HttpServletRequest request) {
 
         System.out.println(userLoginRequest.getEmail());
         System.out.println(userLoginRequest.getPassword());
 
-        User user = userService.userLogin(userLoginRequest.getEmail(), userLoginRequest.getPassword());
+        User user = userService.userLogin(userLoginRequest.getEmail(), userLoginRequest.getPassword(), request);
 
         if (user != null && user.isAdmin()) {
             session.setAttribute("loginAdminEmail", user.getEmail());
@@ -54,6 +57,20 @@ public class LoginController {
             model.addAttribute("invalid", true);
             return "login/login";
         }
+    }
+
+    @GetMapping("/current")
+    public User getCurrentUser(HttpServletRequest request) {
+        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
+        User currentUser = (User) userObj;
+        if (currentUser == null) {
+//            throw new BusinessException(ErrorCode.NOT_LOGIN);
+        }
+        long userId = currentUser.getId();
+        // TODO 校验用户是否合法
+        User user = userService.getUserById(userId);
+        User safetyUser = userService.getSafetyUser(user);
+        return safetyUser;
     }
 
     @GetMapping("reset-password")

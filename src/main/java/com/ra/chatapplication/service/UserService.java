@@ -5,11 +5,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface UserService {
 
-    User userLogin(String email, String password);
+    User userLogin(String email, String password, HttpServletRequest request);
 
     User getUserById(long id);
 
@@ -44,4 +45,8 @@ public interface UserService {
     User getUserByEmail(String email);
 
     User findCurrentUser();
+
+    User getSafetyUser(User originUser);
+
+    User getLoginUser(HttpServletRequest request);
 }

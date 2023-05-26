@@ -1,7 +1,9 @@
 package com.ra.chatapplication;
 
+import com.ra.chatapplication.model.entity.Chat;
 import com.ra.chatapplication.model.entity.User;
 import com.ra.chatapplication.service.UserService;
+import com.ra.chatapplication.service.ChatService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -17,7 +19,7 @@ public class ChatApplication {
 
         ConfigurableApplicationContext run = SpringApplication.run(ChatApplication.class, args);
         UserService userService = (UserService) run.getBean("userServiceImpl");
-//        ChatService chatService = (ChatService) run.getBean("chatServiceImpl");
+        ChatService chatService = (ChatService) run.getBean("chatServiceImpl");
 
         User u1 = new User("John", "Doe", "johndoe@example.com", "mypassword", false);
         User u2 = new User("Jane", "Smith", "janesmith@example.com", "mypassword2", true);
@@ -73,6 +75,25 @@ public class ChatApplication {
         userService.createUser(u24);
         userService.createUser(u25);
 
+        User user1 = userService.getUserById(1);
+        User user2 = userService.getUserById(2);
+        User user3 = userService.getUserById(3);
+
+        Chat c1 = new Chat("Chat 1", "Chat created by user 1", user1);
+        Chat c2 = new Chat("Chat 2", "Chat created by user 2", user2);
+        Chat c3 = new Chat("Chat 3", "Chat created by user 3", user3);
+
+        chatService.saveChat(c1);
+        chatService.saveChat(c2);
+        chatService.saveChat(c3);
+
+        chatService.addMemberToChat(c1, u4);
+        chatService.addMemberToChat(c1, u5);
+        chatService.addMemberToChat(c1, u6);
+        chatService.addMemberToChat(c1, u3);
+
+        chatService.addMemberToChat(c2, u4);
+        chatService.addMemberToChat(c2, u6);
 
         System.out.println(userService.getAllUsers());
     }

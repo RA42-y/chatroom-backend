@@ -1,6 +1,8 @@
 package com.ra.chatapplication.service.impl;
 
+import com.ra.chatapplication.common.ErrorCode;
 import com.ra.chatapplication.dao.UserRepository;
+import com.ra.chatapplication.exception.CustomException;
 import com.ra.chatapplication.model.entity.User;
 import com.ra.chatapplication.service.UserService;
 import com.ra.chatapplication.utils.EmailUtils;
@@ -14,7 +16,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+
+import static com.ra.chatapplication.constant.UserConstant.USER_LOGIN_STATE;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -25,10 +30,14 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private EmailUtils emailUtils;
 
-    public User userLogin(String email, String password) {
+    public User userLogin(String email, String password, HttpServletRequest request) {
         User user = userRepository.findByEmailIgnoreCase(email);
         if (user != null && user.getPassword().equals(password)) {
-            return user;
+            // 3. 用户脱敏
+            User safetyUser = getSafetyUser(user);
+            // 4. 记录用户的登录态
+            request.getSession().setAttribute(USER_LOGIN_STATE, safetyUser);
+            return safetyUser;
         }
         return null;
     }
@@ -134,6 +143,33 @@ public class UserServiceImpl implements UserService {
     public User findCurrentUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByEmailIgnoreCase(email);
+    }
+
+    public User getSafetyUser(User originUser) {
+        if (originUser == null) {
+            return null;
+        }
+        User safetyUser = new User();
+        safetyUser.setId(originUser.getId());
+        safetyUser.setFirstName(originUser.getFirstName());
+        safetyUser.setLastName(originUser.getLastName());
+        safetyUser.setEmail(originUser.getEmail());
+        safetyUser.setAdmin(originUser.getAdmin());
+        safetyUser.setActive(originUser.getActive());
+
+        return safetyUser;
+    }
+
+    @Override
+    public User getLoginUser(HttpServletRequest request) {
+        if (request == null) {
+            return null;
+        }
+        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
+        if (userObj == null) {
+            throw new CustomException(ErrorCode.NO_AUTH);
+        }
+        return (User) userObj;
     }
 
 }
