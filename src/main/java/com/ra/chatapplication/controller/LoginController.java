@@ -32,6 +32,7 @@ public class LoginController {
     private PasswordEncoder passwordEncoder;
 
 
+
     @GetMapping("")
     public String getLogin(@RequestParam(required = false) String error, @RequestParam(required = false) String logout, Model model) {
         model.addAttribute("userLoginRequest", new UserLoginRequest());
@@ -73,6 +74,9 @@ public class LoginController {
         User loginUser = userService.getLoginUser(request);
         System.out.println(loginUser.getEmail());
 
+        if (!loginUser.isActive()) {
+            return "redirect:/login?blocked";
+        }
         if (loginUser.isFirstLogin()){
             ra.addFlashAttribute("user", loginUser);
             return "redirect:/login/reset-password";
@@ -95,11 +99,15 @@ public class LoginController {
         return "login/reset-password";
     }
 
+    private String getUserRawPassword(long userId){
+        return userService.getUserById(userId).getPassword();
+    }
+
     @PostMapping("reset-password")
     public String postResetPassword(@ModelAttribute UserResetPasswordRequest userResetPasswordRequest, HttpServletRequest request, Model model) {
         User loginUser = userService.getLoginUser(request);
         if (userResetPasswordRequest.getPasswordNew().equals(userResetPasswordRequest.getPasswordValidation())) {
-            if (userService.comparePasswords(userResetPasswordRequest.getPasswordNew(), loginUser.getPassword())) {
+            if (userService.comparePasswords(userResetPasswordRequest.getPasswordNew(), getUserRawPassword(loginUser.getId()))) {
                 model.addAttribute("invalidNotChanged", true);
                 return "login/reset-password";
             }
@@ -117,10 +125,10 @@ public class LoginController {
         }
     }
 
-//    @GetMapping("/logout")
-//    public String getLogout(HttpSession session) {
-//        session.invalidate();
-//        return "redirect:/login";
-//    }
+    @GetMapping("/logout")
+    public String getLogout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/login?logout";
+    }
 
 }

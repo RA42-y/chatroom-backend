@@ -6,6 +6,7 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.ra.chatapplication.model.entity.User;
 import com.ra.chatapplication.service.UserService;
@@ -27,8 +28,8 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
 //        User user = (User) authentication.getPrincipal();
-        Authentication loggedInUser = SecurityContextHolder.getContext().getAuthentication();
-        String email = loggedInUser.getName();
+        Authentication loginUser = SecurityContextHolder.getContext().getAuthentication();
+        String email = loginUser.getName();
         User user = userService.getUserByEmail(email);
         System.out.println(user.getEmail() + " success.");
         if (user.getFailureTimes() > 0) {

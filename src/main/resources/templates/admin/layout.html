@@ -41,7 +41,7 @@
             </ul>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="/logout">Logout</a>
+                    <a class="nav-link" href="/login/logout">Logout</a>
                 </li>
             </ul>
         </div>
@@ -51,9 +51,9 @@
 <div class="container-fluid mt-4" style="display: flex">
     <aside class="col-md-3" th:fragment="aside">
         <h4>Admin Info</h4><br>
-        <p><strong>Email:</strong> <span th:text="${session.loginAdminEmail}"></span></p>
-        <p><strong>First name:</strong> <span th:text="${session.loginAdminFirstName}"></span></p>
-        <p><strong>Last name:</strong> <span th:text="${session.loginAdminLastName}"></span></p>
+        <p><strong>Email:</strong> <span th:text="${session.userLoginState.email}"></span></p>
+        <p><strong>First name:</strong> <span th:text="${session.userLoginState.firstName}"></span></p>
+        <p><strong>Last name:</strong> <span th:text="${session.userLoginState.lastName}"></span></p>
     </aside>
     <main class="col-md-9" th:fragment="user-list(h1Title)">
         <h1 th:text="${h1Title}"></h1>

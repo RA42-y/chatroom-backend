@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
+
+import static com.ra.chatapplication.constant.UserConstant.USER_LOGIN_STATE;
 
 /**
  * URL de base du endpoint : http://localhost:8080/admin<br>
@@ -33,7 +36,7 @@ public class AdminController {
 //    }
 
     @GetMapping("user-list")
-    public String getUserList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, @RequestParam(defaultValue = "") String sortBy, @RequestParam(defaultValue = "") String keyword, Model model) {
+    public String getUserList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, @RequestParam(defaultValue = "") String sortBy, @RequestParam(defaultValue = "") String keyword, Model model, HttpSession session) {
         if (keyword.equals("")) {
             Page<User> users = userService.getAllUsersByPage(page, size, sortBy);
             model.addAttribute("users", users);
@@ -43,6 +46,7 @@ public class AdminController {
         }
         model.addAttribute("sortBy", sortBy);
         model.addAttribute("keyword", keyword);
+//        System.out.println(session.getAttribute(USER_LOGIN_STATE));
         return "admin/user-list";
     }
 

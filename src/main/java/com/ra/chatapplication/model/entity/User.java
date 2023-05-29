@@ -121,12 +121,12 @@ public class User implements Serializable, UserDetails {
     }
 
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
     @Override
     public String getUsername() {
-        return email;
+        return this.email;
     }
 
     @Override
