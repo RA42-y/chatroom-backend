@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -29,6 +30,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private EmailUtils emailUtils;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public User userLogin(String email, String password, HttpServletRequest request) {
         User user = userRepository.findByEmailIgnoreCase(email);
@@ -74,13 +78,17 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByActiveFalse();
     }
 
-    public User createUser(User user) {
-        return userRepository.save(user);
+    public User createUser(String firstName, String lastName, String email, String password, Boolean admin) {
+        String encodedPassword = passwordEncoder.encode(password);
+        User user = new User(firstName, lastName, email, encodedPassword, admin);
+        userRepository.save(user);
+        return user;
     }
 
     public User createUserByAdmin(String firstName, String lastName, String email, Boolean admin) throws MessagingException {
         String password = PasswordUtils.generateRandomPassword(8);
-        User user = new User(firstName, lastName, email, password, admin);
+        String encodedPassword = passwordEncoder.encode(password);
+        User user = new User(firstName, lastName, email, encodedPassword, admin);
         userRepository.save(user);
         System.out.println(user.getEmail());
         System.out.println(user.getFirstName());
@@ -88,7 +96,7 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    public User editUser(User user) {
+    public User saveUser(User user) {
         return userRepository.save(user);
     }
 
@@ -105,6 +113,13 @@ public class UserServiceImpl implements UserService {
     public User activateUser(long id) {
         User user = userRepository.findById(id);
         user.setActive(true);
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User resetUserFailureTimes(long id) {
+        User user = userRepository.findById(id);
+        user.setFailureTimes(0);
         return userRepository.save(user);
     }
 
@@ -170,6 +185,10 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(ErrorCode.NO_AUTH);
         }
         return (User) userObj;
+    }
+
+    public boolean comparePasswords(String rawPassword, String encodedPassword) {
+        return passwordEncoder.matches(rawPassword, encodedPassword);
     }
 
 }

@@ -4,12 +4,19 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * Create chat request body
+ */
 @Data
 public class ChatCreateRequest implements Serializable {
 
+    /**
+     * Chat name
+     */
     private String name;
 
+    /**
+     * Chat description
+     */
     private String description;
-
-    private Long userId;
 }

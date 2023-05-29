@@ -7,12 +7,16 @@ import com.ra.chatapplication.model.request.ChatCreateRequest;
 import com.ra.chatapplication.model.request.ChatJoinRequest;
 import com.ra.chatapplication.service.UserService;
 import com.ra.chatapplication.service.ChatService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -24,16 +28,36 @@ import java.util.List;
 //@CrossOrigin(origins = {"http://localhost:5173"}, allowCredentials = "true")
 @Slf4j
 public class ChatController {
+
+    @Autowired
+    private HttpSession httpSession;
+
     @Resource
     UserService userService;
 
     @Resource
     ChatService chatService;
 
-    @GetMapping("chat-created-list/{id}")
-    public List<Chat> getChatsCreateByUser(@PathVariable("id") long userID) {
-        User user = userService.getUserById(userID);
-        List<Chat> chats = chatService.getChatsCreatedByUser(user);
+//    @GetMapping("chat-created-list/{id}")
+//    public List<Chat> getChatsCreateByUser(@PathVariable("id") long userID) {
+//        User user = userService.getUserById(userID);
+//        List<Chat> chats = chatService.getChatsCreatedByUser(user);
+//        return chats;
+//    }
+
+    @GetMapping("chat-created-list")
+    public List<Chat> getChatsCreateByUser(HttpServletRequest request) {
+        User loginUser = userService.getLoginUser(request);
+//        User user = userService.getUserById(userID);
+        List<Chat> chats = chatService.getChatsCreatedByUser(loginUser);
+        return chats;
+    }
+
+    @GetMapping("chat-joined-list")
+    public List<Chat> getChatsJoinedByUser(HttpServletRequest request) {
+        User loginUser = userService.getLoginUser(request);
+//        User user = userService.getUserById(userID);
+        List<Chat> chats = chatService.getChatsOfUser(loginUser);
         return chats;
     }
 
@@ -46,12 +70,10 @@ public class ChatController {
 
 
     @PostMapping("create")
-    public Long addTeam(@RequestBody ChatCreateRequest chatCreateRequest, HttpServletRequest request) {
+    public Long createChat(@RequestBody ChatCreateRequest chatCreateRequest, HttpServletRequest request) {
         User loginUser = userService.getLoginUser(request);
-        Chat chat = new Chat();
-        BeanUtils.copyProperties(chatCreateRequest, chat);
-        long chatId = chatService.createChat(chat, loginUser);
-        return chatId;
+        Chat chat = chatService.createChat(chatCreateRequest.getName(), chatCreateRequest.getDescription(), loginUser);
+        return chat.getId();
     }
 
 

@@ -99,6 +99,7 @@ public class AdminController {
     @GetMapping("activate-user/{id}")
     public String getActivateUser(@PathVariable("id") long userID) {
         userService.activateUser(userID);
+        userService.resetUserFailureTimes(userID);
         return "redirect:/admin/user-list";
     }
 
@@ -126,7 +127,7 @@ public class AdminController {
         user.setLastName(adminEditUserRequest.getLastName());
         user.setAdmin(adminEditUserRequest.getAdmin());
 
-        user = userService.editUser(user);
+        user = userService.saveUser(user);
 
         return "redirect:/admin/user-list";
     }

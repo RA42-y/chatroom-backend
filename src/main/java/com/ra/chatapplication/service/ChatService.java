@@ -22,5 +22,5 @@ public interface ChatService {
 
     boolean joinChat(ChatJoinRequest chatJoinRequest, User loginUser);
 
-    long createChat(Chat chat, User loginUser);
+    Chat createChat(String name, String description, User creator);
 }

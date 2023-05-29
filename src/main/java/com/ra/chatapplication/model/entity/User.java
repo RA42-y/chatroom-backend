@@ -146,7 +146,7 @@ public class User implements Serializable, UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return active;
     }
 
     public void setPassword(String password) {
@@ -175,6 +175,10 @@ public class User implements Serializable, UserDetails {
 
     public void setFailureTimes(Integer failureTimes) {
         this.failureTimes = failureTimes;
+    }
+
+    public boolean isActive() {
+        return active;
     }
 }
 

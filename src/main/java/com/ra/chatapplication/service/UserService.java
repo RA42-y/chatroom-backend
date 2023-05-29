@@ -22,17 +22,19 @@ public interface UserService {
 
     List<User> getAllDeactivatedUsers();
 
-    User createUser(User user);
+    User createUser(String firstName, String lastName, String email, String password, Boolean admin);
 
     User createUserByAdmin(String firstName, String lastName, String email, Boolean admin) throws MessagingException;
 
-    User editUser(User user);
+    User saveUser(User user);
 
     void deleteUser(long id);
 
     User deactivateUser(long id);
 
     User activateUser(long id);
+
+    User resetUserFailureTimes(long id);
 
     Page<User> searchUsers(String keyword, int pageNumber, int pageSize, String sortBy);
 
@@ -49,4 +51,6 @@ public interface UserService {
     User getSafetyUser(User originUser);
 
     User getLoginUser(HttpServletRequest request);
+
+    boolean comparePasswords(String rawPassword, String encodedPassword);
 }

@@ -33,8 +33,6 @@ public class ChatServiceImpl implements ChatService {
         return chatRepository.findByMembersContaining(user);
     }
 
-
-
     @Override
     public Chat saveChat(Chat chat) {
         return chatRepository.save(chat);
@@ -54,11 +52,10 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public long createChat(Chat chat, User loginUser) {
-        chat.setId(null);
-        chat.setCreator(loginUser);
+    public Chat createChat(String name, String description, User creator) {
+        Chat chat = new Chat(name, description, creator);
         chatRepository.save(chat);
-        return chat.getId();
+        return chat;
     }
 }
 
