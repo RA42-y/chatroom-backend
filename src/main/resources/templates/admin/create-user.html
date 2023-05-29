@@ -13,11 +13,44 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
 </head>
 <body>
+<div th:replace="admin/layout::message-icon"></div>
+
 <div th:replace="admin/layout::navbar"></div>
 
 <div class="container-fluid mt-4" style="display: flex">
     <aside th:replace="admin/layout::aside"></aside>
     <main class="col-md-9">
+        <div th:if="${createUserSuccess != null}" class="message" style="width: 40em; margin: 0 auto;">
+            <div th:if="${createUserSuccess}" class="alert alert-success fade show mt-3" role="alert">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                            <use xlink:href="#check-circle-fill"/>
+                        </svg>
+                        <div>
+                            User <strong><span th:text="${newUser.firstName}"></span> <span th:text="${newUser.lastName}"></span></strong> has been successfully created.
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+
+            <div th:if="${!createUserSuccess}" class="alert alert-danger fade show mt-3" role="alert">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
+                            <use xlink:href="#exclamation-triangle-fill"/>
+                        </svg>
+                        <div>
+                            Email <strong><span th:text="${duplicatedEmail}"></span></strong> already existed. Please try another one.
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+
+        </div>
+
         <h1>Create new user</h1>
         <hr/>
         <form class="col-md-5" th:action="@{/admin/create-user}" method="post" th:object="${adminCreateUserRequest}">

@@ -100,25 +100,31 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    public void deleteUser(long id) {
+    @Override
+    public User editUser(User user, String firstName, String lastName, Boolean admin) {
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setAdmin(admin);
+        return userRepository.save(user);
+    }
+
+
+    public void deleteUserById(long id) {
         userRepository.deleteById(id);
     }
 
-    public User deactivateUser(long id) {
-        User user = userRepository.findById(id);
+    public User deactivateUser(User user) {
         user.setActive(false);
         return userRepository.save(user);
     }
 
-    public User activateUser(long id) {
-        User user = userRepository.findById(id);
+    public User activateUser(User user) {
         user.setActive(true);
         return userRepository.save(user);
     }
 
     @Override
-    public User resetUserFailureTimes(long id) {
-        User user = userRepository.findById(id);
+    public User resetUserFailureTimes(User user) {
         user.setFailureTimes(0);
         return userRepository.save(user);
     }

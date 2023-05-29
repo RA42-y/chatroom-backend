@@ -28,13 +28,15 @@ public interface UserService {
 
     User saveUser(User user);
 
-    void deleteUser(long id);
+    User editUser(User user, String firstName, String lastName, Boolean admin);
 
-    User deactivateUser(long id);
+    void deleteUserById(long id);
 
-    User activateUser(long id);
+    User deactivateUser(User user);
 
-    User resetUserFailureTimes(long id);
+    User activateUser(User user);
+
+    User resetUserFailureTimes(User user);
 
     Page<User> searchUsers(String keyword, int pageNumber, int pageSize, String sortBy);
 

@@ -28,7 +28,8 @@ public class Chat implements Serializable {
     @Column
     private String description;
 
-    @ManyToOne
+
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "user")
     private User creator;
 
@@ -38,7 +39,7 @@ public class Chat implements Serializable {
     @LastModifiedDate
     private Date lastModifiedDate;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(name = "chat_user",
             joinColumns = @JoinColumn(name = "chat_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))

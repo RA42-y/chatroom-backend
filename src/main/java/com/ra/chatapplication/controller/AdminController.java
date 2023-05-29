@@ -1,14 +1,17 @@
 package com.ra.chatapplication.controller;
 
 
+import com.ra.chatapplication.model.entity.Chat;
 import com.ra.chatapplication.model.entity.User;
 import com.ra.chatapplication.model.request.AdminCreateUserRequest;
 import com.ra.chatapplication.model.request.AdminEditUserRequest;
+import com.ra.chatapplication.service.ChatService;
 import com.ra.chatapplication.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
@@ -27,6 +30,9 @@ import static com.ra.chatapplication.constant.UserConstant.USER_LOGIN_STATE;
 public class AdminController {
     @Resource
     UserService userService;
+
+    @Resource
+    ChatService chatService;
 
 //    @GetMapping("user-list")
 //    public String getUserList(Model model) {
@@ -84,38 +90,73 @@ public class AdminController {
         String lastName = adminCreateUserRequest.getLastName();
         Boolean admin = adminCreateUserRequest.getAdmin();
 
-        System.out.println(email);
-        System.out.println(firstName);
-        System.out.println(lastName);
-        System.out.println(admin);
-
-        User user = userService.createUserByAdmin(firstName, lastName, email, admin);
-
-        return "redirect:/admin/user-list";
+        if (userService.getUserByEmail(email) != null) {
+            model.addAttribute("createUserSuccess", false);
+            model.addAttribute("duplicatedEmail", email);
+        } else {
+            User newUser = userService.createUserByAdmin(firstName, lastName, email, admin);
+            model.addAttribute("createUserSuccess", true);
+            model.addAttribute("newUser", newUser);
+        }
+        return "admin/create-user";
     }
 
     @GetMapping("deactivate-user/{id}")
-    public String getDeactivateUser(@PathVariable("id") long userID) {
-        userService.deactivateUser(userID);
+    public String getDeactivateUser(@PathVariable("id") long userId, RedirectAttributes ra) {
+        User user = userService.getUserById(userId);
+        if (user != null) {
+            userService.deactivateUser(user);
+            ra.addFlashAttribute("deactivateUserSuccess", true);
+            ra.addFlashAttribute("deactivatedUser", user);
+        } else {
+            ra.addFlashAttribute("deactivateUserSuccess", false);
+            ra.addFlashAttribute("failedUserId", userId);
+        }
         return "redirect:/admin/user-list";
     }
 
     @GetMapping("activate-user/{id}")
-    public String getActivateUser(@PathVariable("id") long userID) {
-        userService.activateUser(userID);
-        userService.resetUserFailureTimes(userID);
+    public String getActivateUser(@PathVariable("id") long userId, RedirectAttributes ra) {
+        User user = userService.getUserById(userId);
+        if (user != null) {
+            userService.activateUser(user);
+            userService.resetUserFailureTimes(user);
+            ra.addFlashAttribute("activateUserSuccess", true);
+            ra.addFlashAttribute("activatedUser", user);
+        } else {
+            ra.addFlashAttribute("activateUserSuccess", false);
+            ra.addFlashAttribute("failedUserId", userId);
+        }
+
         return "redirect:/admin/user-list";
     }
 
     @GetMapping("delete-user/{id}")
-    public String getDeleteUser(@PathVariable("id") long userID) {
-        userService.deleteUser(userID);
+    public String getDeleteUser(@PathVariable("id") long userId, RedirectAttributes ra) {
+        User user = userService.getUserById(userId);
+        if (user != null) {
+            List<Chat> chatsCreated = chatService.getChatsCreatedByUser(user);
+            for (Chat c : chatsCreated) {
+                chatService.removeCreator(c);
+            }
+            List<Chat> chatsJoined = chatService.getChatsOfUser(user);
+            for (Chat c : chatsJoined) {
+                chatService.removeUserFromChat(c, user);
+            }
+            userService.deleteUserById(userId);
+            ra.addFlashAttribute("deleteUserSuccess", true);
+            ra.addFlashAttribute("deletedUserId", userId);
+        } else {
+            ra.addFlashAttribute("deleteUserSuccess", false);
+            ra.addFlashAttribute("failedUserId", userId);
+        }
+
         return "redirect:/admin/user-list";
     }
 
     @GetMapping("edit-user/{id}")
-    public String getEditUser(@PathVariable("id") long userID, Model model) {
-        User user = userService.getUserById(userID);
+    public String getEditUser(@PathVariable("id") long userId, Model model) {
+        User user = userService.getUserById(userId);
         AdminEditUserRequest adminEditUserRequest = new AdminEditUserRequest(user.getEmail(), user.getFirstName(), user.getLastName(), user.getAdmin());
         model.addAttribute("adminEditUserRequest", adminEditUserRequest);
         model.addAttribute("user", user);
@@ -123,18 +164,16 @@ public class AdminController {
     }
 
     @PostMapping("edit-user/{id}")
-    public String postEditUser(@PathVariable("id") long userID, @ModelAttribute AdminEditUserRequest adminEditUserRequest) {
-        User user = userService.getUserById(userID);
-
-        user.setEmail(adminEditUserRequest.getEmail());
-        user.setFirstName(adminEditUserRequest.getFirstName());
-        user.setLastName(adminEditUserRequest.getLastName());
-        user.setAdmin(adminEditUserRequest.getAdmin());
-
-        user = userService.saveUser(user);
-
+    public String postEditUser(@PathVariable("id") long userId, @ModelAttribute AdminEditUserRequest adminEditUserRequest, RedirectAttributes ra) {
+        User user = userService.getUserById(userId);
+        if (user != null) {
+            userService.editUser(user, adminEditUserRequest.getFirstName(), adminEditUserRequest.getLastName(), adminEditUserRequest.getAdmin());
+            ra.addFlashAttribute("editUserSuccess", true);
+            ra.addFlashAttribute("editedUser", user);
+        } else {
+            ra.addFlashAttribute("editUserSuccess", false);
+            ra.addFlashAttribute("failedUserId", userId);
+        }
         return "redirect:/admin/user-list";
     }
-
-
 }

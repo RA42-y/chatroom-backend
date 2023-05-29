@@ -34,6 +34,19 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
+    public Chat removeCreator(Chat chat) {
+        chat.setCreator(null);
+        return chatRepository.save(chat);
+    }
+
+    @Override
+    public Chat removeUserFromChat(Chat chat, User user) {
+        List<User> members = chat.getMembers();
+        members.remove(user);
+        return chatRepository.save(chat);
+    }
+
+    @Override
     public Chat saveChat(Chat chat) {
         return chatRepository.save(chat);
     }

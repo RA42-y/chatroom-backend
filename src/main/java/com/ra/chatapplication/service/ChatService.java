@@ -16,6 +16,10 @@ public interface ChatService {
 
     List<Chat> getChatsOfUser(User user);
 
+    Chat removeCreator(Chat chat);
+
+    Chat removeUserFromChat(Chat chat, User user);
+
     Chat saveChat(Chat chat);
 
     void deleteChat(Chat chat);

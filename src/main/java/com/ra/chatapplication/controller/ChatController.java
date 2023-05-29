@@ -39,8 +39,8 @@ public class ChatController {
     ChatService chatService;
 
 //    @GetMapping("chat-created-list/{id}")
-//    public List<Chat> getChatsCreateByUser(@PathVariable("id") long userID) {
-//        User user = userService.getUserById(userID);
+//    public List<Chat> getChatsCreateByUser(@PathVariable("id") long userId) {
+//        User user = userService.getUserById(userId);
 //        List<Chat> chats = chatService.getChatsCreatedByUser(user);
 //        return chats;
 //    }
@@ -48,7 +48,7 @@ public class ChatController {
     @GetMapping("chat-created-list")
     public List<Chat> getChatsCreateByUser(HttpServletRequest request) {
         User loginUser = userService.getLoginUser(request);
-//        User user = userService.getUserById(userID);
+//        User user = userService.getUserById(userId);
         List<Chat> chats = chatService.getChatsCreatedByUser(loginUser);
         return chats;
     }
@@ -56,7 +56,7 @@ public class ChatController {
     @GetMapping("chat-joined-list")
     public List<Chat> getChatsJoinedByUser(HttpServletRequest request) {
         User loginUser = userService.getLoginUser(request);
-//        User user = userService.getUserById(userID);
+//        User user = userService.getUserById(userId);
         List<Chat> chats = chatService.getChatsOfUser(loginUser);
         return chats;
     }

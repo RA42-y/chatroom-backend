@@ -53,8 +53,8 @@ public class UserController {
     }
 
     @GetMapping("user-info/{id}")
-    public User getUserInfo(@PathVariable("id") long userID) {
-        User user = userService.getUserById(userID);
+    public User getUserInfo(@PathVariable("id") long userId) {
+        User user = userService.getUserById(userId);
         return userService.getSafetyUser(user);
     }
 }

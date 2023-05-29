@@ -32,7 +32,7 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
             System.out.println(email + " failed attempts: " + failureTimes);
             if (failureTimes > 3) {
                 if (user.isActive()){
-                    userService.deactivateUser(user.getId());
+                    userService.deactivateUser(user);
                 }
                 System.out.println("Account blacked after " + failureTimes + " attempts failed.");
                 super.setDefaultFailureUrl("/login?blocked");
