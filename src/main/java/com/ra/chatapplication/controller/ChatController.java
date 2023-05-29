@@ -62,7 +62,7 @@ public class ChatController {
     }
 
 
-    @GetMapping("join")
+    @PostMapping("join")
     public Boolean joinTeam(@RequestBody ChatJoinRequest chatJoinRequest, HttpServletRequest request) {
         User loginUser = userService.getLoginUser(request);
         return chatService.joinChat(chatJoinRequest, loginUser);
@@ -70,10 +70,10 @@ public class ChatController {
 
 
     @PostMapping("create")
-    public Long createChat(@RequestBody ChatCreateRequest chatCreateRequest, HttpServletRequest request) {
+    public Chat createChat(@RequestBody ChatCreateRequest chatCreateRequest, HttpServletRequest request) {
         User loginUser = userService.getLoginUser(request);
         Chat chat = chatService.createChat(chatCreateRequest.getName(), chatCreateRequest.getDescription(), loginUser);
-        return chat.getId();
+        return chat;
     }
 
 

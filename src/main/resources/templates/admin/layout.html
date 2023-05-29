@@ -69,7 +69,7 @@
             <div class="col-md-6">
                 <form th:action="@{${#httpServletRequest.requestURI}(page=0, size=${users.size}, sortBy=${sortBy}, keyword=${keyword})}"
                       method="get" style="display: flex">
-                    <input type="text" class="form-control mb-2 mr-sm-2 search" name="keyword" placeholder="Search"
+                    <input type="text" class="form-control mb-2 me-2 search" name="keyword" placeholder="Search"
                            th:value="${param.keyword}"/>
                     <button type="submit" class="btn btn-primary mb-2 search-button"><i class="fa fa-search"></i>
                     </button>
