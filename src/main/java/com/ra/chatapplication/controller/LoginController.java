@@ -31,50 +31,18 @@ public class LoginController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
-
     @GetMapping("")
-    public String getLogin(@RequestParam(required = false) String error, @RequestParam(required = false) String logout, Model model) {
+    public String getLogin(Model model) {
         model.addAttribute("userLoginRequest", new UserLoginRequest());
-//        if (error != null) {
-//            // Handle the error
-//            model.addAttribute("errorMessage", "Invalid credentials. Please try again.");
-//        }
-//        if (logout != null) {
-//            model.addAttribute("logoutMessage", "You have successfully logged out.");
-//        }
         return "login/login";
     }
-
-//    @PostMapping("check")
-//    public String postCheckLogin(@ModelAttribute UserLoginRequest userLoginRequest, Model model, RedirectAttributes ra, HttpSession session, HttpServletRequest request) {
-//
-//        System.out.println(userLoginRequest.getEmail());
-//        System.out.println(userLoginRequest.getPassword());
-//
-//        User user = userService.userLogin(userLoginRequest.getEmail(), userLoginRequest.getPassword(), request);
-//
-//        if (user != null && user.isAdmin()) {
-////            session.setAttribute("loginAdminEmail", user.getEmail());
-////            session.setAttribute("loginAdminFirstName", user.getFirstName());
-////            session.setAttribute("loginAdminLastName", user.getLastName());
-//            if (user.isFirstLogin()) {
-//                ra.addFlashAttribute("user", user);
-//                return "redirect:/login/reset-password";
-//            }
-//            return "redirect:/admin/user-list";
-//        } else {
-//            model.addAttribute("invalid", true);
-//            return "login/login";
-//        }
-//    }
 
     @GetMapping("check")
     public String postCheckLogin(RedirectAttributes ra, HttpSession session, HttpServletRequest request) {
         User loginUser = userService.getLoginUser(request);
         System.out.println(loginUser.getEmail());
-
         if (!loginUser.isActive()) {
+            session.invalidate();
             return "redirect:/login?blocked";
         }
         if (loginUser.isFirstLogin()){
@@ -95,7 +63,7 @@ public class LoginController {
         if (loginUser.isFirstLogin()) {
             model.addAttribute("firstLogin", true);
         }
-        model.addAttribute("userResetPasswordRequest", new UserResetPasswordRequest(loginUser.getEmail()));
+        model.addAttribute("userResetPasswordRequest", new UserResetPasswordRequest());
         return "login/reset-password";
     }
 
