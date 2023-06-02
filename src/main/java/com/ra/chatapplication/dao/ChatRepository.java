@@ -13,6 +13,8 @@ import java.util.List;
 @Repository
 public interface ChatRepository extends JpaRepository<Chat, Long> {
 
+    Page<Chat> findAll(Pageable pageable);
+
     List<Chat> findChatsByCreator(User creator);
 
     Chat findChatById(long id);
@@ -26,6 +28,7 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
     List<Chat> findByMembersContaining(User member);
 
     Page<Chat> findByMembersContaining(User member, Pageable pageable);
+
 
 //    List<User> findByActiveTrue();
 //

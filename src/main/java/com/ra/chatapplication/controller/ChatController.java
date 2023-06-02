@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -30,7 +31,8 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/chat")
-//@CrossOrigin(origins = {"http://localhost:5173"}, allowCredentials = "true")
+//@CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
 @Slf4j
 public class ChatController {
 
@@ -62,14 +64,9 @@ public class ChatController {
 ////        return chats;
 //    }
 
-
-    @GetMapping("chat-joined-list")
-    public BaseResponse<Page<Chat>> getChatsJoinedByUser(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size,HttpServletRequest request) {
-        User loginUser = userService.getLoginUser(request);
-        if (loginUser == null) {
-            throw new CustomException(ErrorCode.NOT_LOGIN);
-        }
-        Page<Chat> chats = chatService.getChatsJoinedByUserByPage(loginUser, page, size);
+    @GetMapping("chat-list")
+    public BaseResponse<Page<Chat>> getChatList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, HttpServletRequest request) {
+        Page<Chat> chats = chatService.getAllChatsByPage(page, size);
         return ResultUtils.success(chats);
     }
 
@@ -83,6 +80,15 @@ public class ChatController {
         return ResultUtils.success(chats);
     }
 
+    @GetMapping("chat-joined-list")
+    public BaseResponse<Page<Chat>> getChatsJoinedByUser(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, HttpServletRequest request) {
+        User loginUser = userService.getLoginUser(request);
+        if (loginUser == null) {
+            throw new CustomException(ErrorCode.NOT_LOGIN);
+        }
+        Page<Chat> chats = chatService.getChatsJoinedByUserByPage(loginUser, page, size);
+        return ResultUtils.success(chats);
+    }
 
     @PostMapping("join")
     public BaseResponse<Boolean> joinTeam(@RequestBody ChatJoinRequest chatJoinRequest, HttpServletRequest request) {
@@ -105,7 +111,6 @@ public class ChatController {
         return ResultUtils.success(chat);
 //        return chat;
     }
-
 
 
 //    @GetMapping("user-list")

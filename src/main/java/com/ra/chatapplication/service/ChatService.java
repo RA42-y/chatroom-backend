@@ -11,6 +11,8 @@ public interface ChatService {
 
 //    Chat saveChat(Chat chat);
 
+    Page<Chat> getAllChatsByPage(int pageNumber, int pageSize);
+
     Chat addMemberToChat(Chat chat, User member);
 
     List<Chat> getChatsCreatedByUser(User user);

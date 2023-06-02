@@ -27,6 +27,7 @@ import static com.ra.chatapplication.constant.UserConstant.USER_LOGIN_STATE;
  */
 @Controller
 @RequestMapping("admin")
+@CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
 public class AdminController {
     @Resource
     UserService userService;

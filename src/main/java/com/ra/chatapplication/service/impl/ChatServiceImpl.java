@@ -22,6 +22,13 @@ public class ChatServiceImpl implements ChatService {
     private ChatRepository chatRepository;
 
     @Override
+    public Page<Chat> getAllChatsByPage(int pageNumber, int pageSize) {
+        Pageable pageable;
+        pageable = PageRequest.of(pageNumber, pageSize);
+        return chatRepository.findAll(pageable);
+    }
+
+    @Override
     public Chat addMemberToChat(Chat chat, User member) {
         chat.getMembers().add(member);
         return chatRepository.save(chat);
