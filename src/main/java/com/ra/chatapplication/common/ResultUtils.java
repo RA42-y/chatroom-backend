@@ -1,14 +1,14 @@
 package com.ra.chatapplication.common;
 
 /**
- * 返回工具类
+ * return utils class
  *
  * @author shizhuzexuan
  */
 public class ResultUtils {
 
     /**
-     * 成功
+     * success
      *
      * @param data
      * @param <T>
@@ -19,7 +19,7 @@ public class ResultUtils {
     }
 
     /**
-     * 失败
+     * failure
      *
      * @param errorCode
      * @return
@@ -29,7 +29,7 @@ public class ResultUtils {
     }
 
     /**
-     * 失败
+     * failure
      *
      * @param code
      * @param message
@@ -41,7 +41,7 @@ public class ResultUtils {
     }
 
     /**
-     * 失败
+     * failure
      *
      * @param errorCode
      * @return
@@ -51,7 +51,7 @@ public class ResultUtils {
     }
 
     /**
-     * 失败
+     * failure
      *
      * @param errorCode
      * @return
