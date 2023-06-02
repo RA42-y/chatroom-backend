@@ -6,6 +6,10 @@ import com.ra.chatapplication.model.entity.User;
 import com.ra.chatapplication.model.request.ChatJoinRequest;
 import com.ra.chatapplication.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -29,8 +33,22 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public List<Chat> getChatsOfUser(User user) {
+    public List<Chat> getChatsJoinedByUser(User user) {
         return chatRepository.findByMembersContaining(user);
+    }
+
+    @Override
+    public Page<Chat> getChatsCreatedByUserByPage(User user, int pageNumber, int pageSize) {
+        Pageable pageable;
+        pageable = PageRequest.of(pageNumber, pageSize);
+        return chatRepository.findByCreator(user, pageable);
+    }
+
+    @Override
+    public Page<Chat> getChatsJoinedByUserByPage(User user, int pageNumber, int pageSize) {
+        Pageable pageable;
+        pageable = PageRequest.of(pageNumber, pageSize);
+        return chatRepository.findByMembersContaining(user, pageable);
     }
 
     @Override

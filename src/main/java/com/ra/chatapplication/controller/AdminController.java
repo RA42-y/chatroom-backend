@@ -139,7 +139,7 @@ public class AdminController {
             for (Chat c : chatsCreated) {
                 chatService.removeCreator(c);
             }
-            List<Chat> chatsJoined = chatService.getChatsOfUser(user);
+            List<Chat> chatsJoined = chatService.getChatsJoinedByUser(user);
             for (Chat c : chatsJoined) {
                 chatService.removeUserFromChat(c, user);
             }

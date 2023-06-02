@@ -1,6 +1,10 @@
 package com.ra.chatapplication.controller;
 
 
+import com.ra.chatapplication.common.BaseResponse;
+import com.ra.chatapplication.common.ErrorCode;
+import com.ra.chatapplication.common.ResultUtils;
+import com.ra.chatapplication.exception.CustomException;
 import com.ra.chatapplication.model.entity.User;
 import com.ra.chatapplication.model.request.AdminCreateUserRequest;
 import com.ra.chatapplication.model.request.AdminEditUserRequest;
@@ -39,22 +43,29 @@ public class UserController {
 //    }
 
     @GetMapping("/current")
-    public User getCurrentUser(HttpServletRequest request) {
+    public BaseResponse<User> getCurrentUser(HttpServletRequest request) {
         Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
         User currentUser = (User) userObj;
         if (currentUser == null) {
-//            throw new BusinessException(ErrorCode.NOT_LOGIN);
+            throw new CustomException(ErrorCode.NOT_LOGIN);
         }
         long userId = currentUser.getId();
         // TODO 校验用户是否合法
         User user = userService.getUserById(userId);
         User safetyUser = userService.getSafetyUser(user);
-        return safetyUser;
+        return ResultUtils.success(safetyUser);
     }
 
     @GetMapping("user-info/{id}")
-    public User getUserInfo(@PathVariable("id") long userId) {
+    public BaseResponse<User> getUserInfo(@PathVariable("id") long userId) {
+        if (userId <= 0) {
+            throw new CustomException(ErrorCode.PARAMS_ERROR);
+        }
         User user = userService.getUserById(userId);
-        return userService.getSafetyUser(user);
+        if (user == null) {
+            throw new CustomException(ErrorCode.PARAMS_ERROR);
+        }
+        User safetyUser = userService.getSafetyUser(user);
+        return ResultUtils.success(safetyUser);
     }
 }

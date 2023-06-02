@@ -21,7 +21,11 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
 
     List<Chat> findByCreator(User creator);
 
+    Page<Chat> findByCreator(User creator, Pageable pageable);
+
     List<Chat> findByMembersContaining(User member);
+
+    Page<Chat> findByMembersContaining(User member, Pageable pageable);
 
 //    List<User> findByActiveTrue();
 //

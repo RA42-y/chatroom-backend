@@ -1,6 +1,10 @@
 package com.ra.chatapplication.controller;
 
 
+import com.ra.chatapplication.common.BaseResponse;
+import com.ra.chatapplication.common.ErrorCode;
+import com.ra.chatapplication.common.ResultUtils;
+import com.ra.chatapplication.exception.CustomException;
 import com.ra.chatapplication.model.entity.User;
 import com.ra.chatapplication.model.entity.Chat;
 import com.ra.chatapplication.model.request.ChatCreateRequest;
@@ -12,6 +16,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -45,35 +50,60 @@ public class ChatController {
 //        return chats;
 //    }
 
-    @GetMapping("chat-created-list")
-    public List<Chat> getChatsCreateByUser(HttpServletRequest request) {
-        User loginUser = userService.getLoginUser(request);
-//        User user = userService.getUserById(userId);
-        List<Chat> chats = chatService.getChatsCreatedByUser(loginUser);
-        return chats;
-    }
+//    @GetMapping("chat-created-list")
+//    public BaseResponse<List<Chat>> getChatsCreateByUser(HttpServletRequest request) {
+//        User loginUser = userService.getLoginUser(request);
+//        if (loginUser == null) {
+//            throw new CustomException(ErrorCode.NOT_LOGIN);
+//        }
+////        User user = userService.getUserById(userId);
+//        List<Chat> chats = chatService.getChatsCreatedByUser(loginUser);
+//        return ResultUtils.success(chats);
+////        return chats;
+//    }
+
 
     @GetMapping("chat-joined-list")
-    public List<Chat> getChatsJoinedByUser(HttpServletRequest request) {
+    public BaseResponse<Page<Chat>> getChatsJoinedByUser(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size,HttpServletRequest request) {
         User loginUser = userService.getLoginUser(request);
-//        User user = userService.getUserById(userId);
-        List<Chat> chats = chatService.getChatsOfUser(loginUser);
-        return chats;
+        if (loginUser == null) {
+            throw new CustomException(ErrorCode.NOT_LOGIN);
+        }
+        Page<Chat> chats = chatService.getChatsJoinedByUserByPage(loginUser, page, size);
+        return ResultUtils.success(chats);
+    }
+
+    @GetMapping("chat-created-list")
+    public BaseResponse<Page<Chat>> getChatsCreateByUser(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, HttpServletRequest request) {
+        User loginUser = userService.getLoginUser(request);
+        if (loginUser == null) {
+            throw new CustomException(ErrorCode.NOT_LOGIN);
+        }
+        Page<Chat> chats = chatService.getChatsCreatedByUserByPage(loginUser, page, size);
+        return ResultUtils.success(chats);
     }
 
 
     @PostMapping("join")
-    public Boolean joinTeam(@RequestBody ChatJoinRequest chatJoinRequest, HttpServletRequest request) {
+    public BaseResponse<Boolean> joinTeam(@RequestBody ChatJoinRequest chatJoinRequest, HttpServletRequest request) {
         User loginUser = userService.getLoginUser(request);
-        return chatService.joinChat(chatJoinRequest, loginUser);
+        if (loginUser == null) {
+            throw new CustomException(ErrorCode.NOT_LOGIN);
+        }
+        boolean result = chatService.joinChat(chatJoinRequest, loginUser);
+        return ResultUtils.success(result);
     }
 
 
     @PostMapping("create")
-    public Chat createChat(@RequestBody ChatCreateRequest chatCreateRequest, HttpServletRequest request) {
+    public BaseResponse<Chat> createChat(@RequestBody ChatCreateRequest chatCreateRequest, HttpServletRequest request) {
         User loginUser = userService.getLoginUser(request);
+        if (loginUser == null) {
+            throw new CustomException(ErrorCode.NOT_LOGIN);
+        }
         Chat chat = chatService.createChat(chatCreateRequest.getName(), chatCreateRequest.getDescription(), loginUser);
-        return chat;
+        return ResultUtils.success(chat);
+//        return chat;
     }
 
 
