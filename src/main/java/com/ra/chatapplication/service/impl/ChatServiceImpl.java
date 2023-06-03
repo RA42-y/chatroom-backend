@@ -29,9 +29,14 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
+    public Chat getChatById(long id) {
+        return chatRepository.findChatById(id);
+    }
+
+    @Override
     public Chat addMemberToChat(Chat chat, User member) {
         chat.getMembers().add(member);
-        return chatRepository.save(chat);
+        return chat;
     }
 
     @Override
@@ -61,14 +66,14 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public Chat removeCreator(Chat chat) {
         chat.setCreator(null);
-        return chatRepository.save(chat);
+        return chat;
     }
 
     @Override
     public Chat removeUserFromChat(Chat chat, User user) {
         List<User> members = chat.getMembers();
         members.remove(user);
-        return chatRepository.save(chat);
+        return chat;
     }
 
     @Override

@@ -139,10 +139,12 @@ public class AdminController {
             List<Chat> chatsCreated = chatService.getChatsCreatedByUser(user);
             for (Chat c : chatsCreated) {
                 chatService.removeCreator(c);
+                chatService.saveChat(c);
             }
             List<Chat> chatsJoined = chatService.getChatsJoinedByUser(user);
             for (Chat c : chatsJoined) {
                 chatService.removeUserFromChat(c, user);
+                chatService.saveChat(c);
             }
             userService.deleteUserById(userId);
             ra.addFlashAttribute("deleteUserSuccess", true);

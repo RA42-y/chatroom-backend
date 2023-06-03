@@ -13,6 +13,8 @@ public interface ChatService {
 
     Page<Chat> getAllChatsByPage(int pageNumber, int pageSize);
 
+    Chat getChatById(long id);
+
     Chat addMemberToChat(Chat chat, User member);
 
     List<Chat> getChatsCreatedByUser(User user);

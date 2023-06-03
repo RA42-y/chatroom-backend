@@ -45,10 +45,16 @@ public class ChatApplication {
         chatService.addMemberToChat(c1, u4);
         chatService.addMemberToChat(c1, u5);
         chatService.addMemberToChat(c1, u6);
-        chatService.addMemberToChat(c1, u3);
+
+        chatService.saveChat(c1);
+
+//        chatService.saveChat(c1);
+//        chatService.addMemberToChat(c1, u3);
 //
 //        chatService.addMemberToChat(c2, u4);
 //        chatService.addMemberToChat(c2, u6);
+
+        System.out.println(c1.getMembers());
 
         System.out.println(userService.getAllUsers());
     }

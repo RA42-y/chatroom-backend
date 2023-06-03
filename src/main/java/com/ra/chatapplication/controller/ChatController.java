@@ -90,6 +90,12 @@ public class ChatController {
         return ResultUtils.success(chats);
     }
 
+    @GetMapping("chat-info/{id}")
+    public BaseResponse<Chat> getChatInfo(@PathVariable("id") long chatId) {
+        Chat chat = chatService.getChatById(chatId);
+        return ResultUtils.success(chat);
+    }
+
     @PostMapping("join")
     public BaseResponse<Boolean> joinTeam(@RequestBody ChatJoinRequest chatJoinRequest, HttpServletRequest request) {
         User loginUser = userService.getLoginUser(request);
@@ -109,7 +115,6 @@ public class ChatController {
         }
         Chat chat = chatService.createChat(chatCreateRequest.getName(), chatCreateRequest.getDescription(), loginUser);
         return ResultUtils.success(chat);
-//        return chat;
     }
 
 
