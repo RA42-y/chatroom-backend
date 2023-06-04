@@ -8,6 +8,7 @@ import com.ra.chatapplication.exception.CustomException;
 import com.ra.chatapplication.model.entity.User;
 import com.ra.chatapplication.model.entity.Chat;
 import com.ra.chatapplication.model.request.ChatCreateRequest;
+import com.ra.chatapplication.model.request.ChatEditRequest;
 import com.ra.chatapplication.model.request.ChatJoinRequest;
 import com.ra.chatapplication.service.UserService;
 import com.ra.chatapplication.service.ChatService;
@@ -96,7 +97,7 @@ public class ChatController {
         return ResultUtils.success(chat);
     }
 
-    @PostMapping("join")
+    @PostMapping("join-chat")
     public BaseResponse<Boolean> joinTeam(@RequestBody ChatJoinRequest chatJoinRequest, HttpServletRequest request) {
         User loginUser = userService.getLoginUser(request);
         if (loginUser == null) {
@@ -107,7 +108,7 @@ public class ChatController {
     }
 
 
-    @PostMapping("create")
+    @PostMapping("create-chat")
     public BaseResponse<Chat> createChat(@RequestBody ChatCreateRequest chatCreateRequest, HttpServletRequest request) {
         User loginUser = userService.getLoginUser(request);
         if (loginUser == null) {
@@ -117,12 +118,63 @@ public class ChatController {
         return ResultUtils.success(chat);
     }
 
+    @GetMapping("delete-chat/{id}")
+    public BaseResponse<Boolean> deleteChat(@PathVariable("id") long chatId, HttpServletRequest request) {
+        User loginUser = userService.getLoginUser(request);
+        if (loginUser == null) {
+            throw new CustomException(ErrorCode.NOT_LOGIN);
+        }
+        Chat chat = chatService.getChatById(chatId);
+        if (chat == null) {
+            throw new CustomException(ErrorCode.PARAMS_ERROR);
+        }
+        if (chatService.isUserCreator(chat, loginUser)) {
+            chatService.deleteChat(chat);
+        } else {
+            throw new CustomException(ErrorCode.NO_AUTH);
+        }
+        return ResultUtils.success(true);
+    }
 
-//    @GetMapping("user-list")
-//    public String getUserList(Model model) {
-//        List<User> users = userService.getAllUsers();
-//        model.addAttribute("users", users);
-//        return "admin/user-list";
-//    }
+    @PostMapping("edit-chat/{id}")
+    public BaseResponse<Chat> editChat(@PathVariable("id") long chatId, @RequestBody ChatEditRequest chatEditRequest, HttpServletRequest request) {
+        User loginUser = userService.getLoginUser(request);
+        if (loginUser == null) {
+            throw new CustomException(ErrorCode.NOT_LOGIN);
+        }
+        Chat chat = chatService.getChatById(chatId);
+        if (chat == null) {
+            throw new CustomException(ErrorCode.PARAMS_ERROR);
+        }
+        if (chatEditRequest == null) {
+            throw new CustomException(ErrorCode.PARAMS_ERROR);
+        }
+        if (chatService.isUserCreator(chat, loginUser)) {
+            chatService.editChat(chat, chatEditRequest.getName(), chatEditRequest.getDescription());
+            chatService.saveChat(chat);
+        } else {
+            throw new CustomException(ErrorCode.NO_AUTH);
+        }
+        return ResultUtils.success(chat);
+    }
+
+    @GetMapping("quit-chat/{id}")
+    public BaseResponse<Boolean> quitChat(@PathVariable("id") long chatId, HttpServletRequest request) {
+        User loginUser = userService.getLoginUser(request);
+        if (loginUser == null) {
+            throw new CustomException(ErrorCode.NOT_LOGIN);
+        }
+        Chat chat = chatService.getChatById(chatId);
+        if (chat == null) {
+            throw new CustomException(ErrorCode.PARAMS_ERROR);
+        }
+        if (chatService.isUserMember(chat, loginUser)) {
+            chatService.removeUserFromChat(chat, loginUser);
+            chatService.saveChat(chat);
+        } else {
+            throw new CustomException(ErrorCode.NO_AUTH);
+        }
+        return ResultUtils.success(true);
+    }
 
 }

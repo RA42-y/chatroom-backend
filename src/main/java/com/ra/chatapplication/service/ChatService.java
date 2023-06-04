@@ -35,7 +35,13 @@ public interface ChatService {
 
     void deleteChat(Chat chat);
 
+    Chat editChat(Chat chat, String name, String description);
+
     boolean joinChat(ChatJoinRequest chatJoinRequest, User loginUser);
 
     Chat createChat(String name, String description, User creator);
+
+    boolean isUserCreator(Chat chat, User user);
+
+    boolean isUserMember(Chat chat, User user);
 }

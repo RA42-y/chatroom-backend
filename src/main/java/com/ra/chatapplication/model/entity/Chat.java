@@ -28,13 +28,15 @@ public class Chat implements Serializable {
     @Column
     private String description;
 
-
     @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "user")
     private User creator;
 
     @CreatedDate
     private Date createDate;
+
+    @Column
+    private Date expireDate;
 
     @LastModifiedDate
     private Date lastModifiedDate;
@@ -45,11 +47,19 @@ public class Chat implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> members = new ArrayList<User>();
 
+    public Chat(String name, String description, User creator, Date expireDate) {
+        this.name = name;
+        this.description = description;
+        this.creator = creator;
+        this.expireDate = expireDate;
+    }
+
     public Chat(String name, String description, User creator) {
         this.name = name;
         this.description = description;
         this.creator = creator;
     }
+
     public Chat(){
     }
 
@@ -91,5 +101,13 @@ public class Chat implements Serializable {
 
     public void setCreator(User creator) {
         this.creator = creator;
+    }
+
+    public Date getExpireDate() {
+        return expireDate;
+    }
+
+    public void setExpireDate(Date expireDate) {
+        this.expireDate = expireDate;
     }
 }

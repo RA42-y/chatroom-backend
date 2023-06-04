@@ -85,7 +85,7 @@ public class ChatServiceImpl implements ChatService {
     public void deleteChat(Chat chat) {
         chatRepository.delete(chat);
     }
-    
+
 
     @Override
     public boolean joinChat(ChatJoinRequest chatJoinRequest, User loginUser) {
@@ -99,6 +99,24 @@ public class ChatServiceImpl implements ChatService {
         Chat chat = new Chat(name, description, creator);
         chatRepository.save(chat);
         return chat;
+    }
+
+    @Override
+    public Chat editChat(Chat chat, String name, String description) {
+        chat.setName(name);
+        chat.setDescription(description);
+        return chat;
+    }
+
+    @Override
+    public boolean isUserCreator(Chat chat, User user) {
+        return user == chat.getCreator();
+    }
+
+    @Override
+    public boolean isUserMember(Chat chat, User user) {
+        List<User> member = chat.getMembers();
+        return member.contains(user);
     }
 }
 
