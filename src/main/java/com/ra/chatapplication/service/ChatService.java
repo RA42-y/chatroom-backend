@@ -25,6 +25,8 @@ public interface ChatService {
 
     Page<Chat> getChatsJoinedByUserByPage(User user, int pageNumber, int pageSize);
 
+    Page<Chat> getChatsOfUserByPage(User user, int pageNumber, int pageSize);
+
     Chat removeCreator(Chat chat);
 
     Chat removeUserFromChat(Chat chat, User user);

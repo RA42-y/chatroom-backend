@@ -64,6 +64,13 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
+    public Page<Chat> getChatsOfUserByPage(User user, int pageNumber, int pageSize) {
+        Pageable pageable;
+        pageable = PageRequest.of(pageNumber, pageSize);
+        return chatRepository.findByMembersContainingOrCreator(user, user, pageable);
+    }
+
+    @Override
     public Chat removeCreator(Chat chat) {
         chat.setCreator(null);
         return chat;

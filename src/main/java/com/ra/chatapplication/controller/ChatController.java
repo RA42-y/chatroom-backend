@@ -37,9 +37,6 @@ import java.util.List;
 @Slf4j
 public class ChatController {
 
-    @Autowired
-    private HttpSession httpSession;
-
     @Resource
     UserService userService;
 
@@ -65,13 +62,23 @@ public class ChatController {
 ////        return chats;
 //    }
 
-    @GetMapping("chat-list")
-    public BaseResponse<Page<Chat>> getChatList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, HttpServletRequest request) {
+    @GetMapping("all-chat-list")
+    public BaseResponse<Page<Chat>> getAllChatList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, HttpServletRequest request) {
         Page<Chat> chats = chatService.getAllChatsByPage(page, size);
         return ResultUtils.success(chats);
     }
 
-    @GetMapping("chat-created-list")
+    @GetMapping("my-chat-list")
+    public BaseResponse<Page<Chat>> getChatsOfUser(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, HttpServletRequest request) {
+        User loginUser = userService.getLoginUserByToken(request);
+        if (loginUser == null) {
+            throw new CustomException(ErrorCode.NOT_LOGIN);
+        }
+        Page<Chat> chats = chatService.getChatsOfUserByPage(loginUser, page, size);
+        return ResultUtils.success(chats);
+    }
+
+    @GetMapping("created-chat-list")
     public BaseResponse<Page<Chat>> getChatsCreateByUser(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, HttpServletRequest request) {
         User loginUser = userService.getLoginUserByToken(request);
         if (loginUser == null) {
@@ -81,7 +88,7 @@ public class ChatController {
         return ResultUtils.success(chats);
     }
 
-    @GetMapping("chat-joined-list")
+    @GetMapping("joined-chat-list")
     public BaseResponse<Page<Chat>> getChatsJoinedByUser(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, HttpServletRequest request) {
         User loginUser = userService.getLoginUserByToken(request);
         if (loginUser == null) {
