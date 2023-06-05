@@ -37,20 +37,6 @@ public class UserController {
     @Resource
     UserService userService;
 
-//    @Autowired
-//    private TokenUtils tokenUtils;
-
-//    @PostMapping("login")
-//    public User userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
-//        String userAccount = userLoginRequest.getEmail();
-//        String userPassword = userLoginRequest.getPassword();
-//        User user = userService.userLogin(userAccount, userPassword, request);
-//        return user;
-//    }
-
-    @Autowired
-    private JwtUtils jwtUtils;
-
     @GetMapping("/current")
     public BaseResponse<User> getCurrentUser(HttpServletRequest request) {
         User currentUser = userService.getLoginUserByToken(request);
