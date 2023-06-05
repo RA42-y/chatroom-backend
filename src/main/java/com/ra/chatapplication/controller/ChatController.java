@@ -55,7 +55,7 @@ public class ChatController {
 
 //    @GetMapping("chat-created-list")
 //    public BaseResponse<List<Chat>> getChatsCreateByUser(HttpServletRequest request) {
-//        User loginUser = userService.getLoginUser(request);
+//        User loginUser = userService.getLoginUserByToken(request);
 //        if (loginUser == null) {
 //            throw new CustomException(ErrorCode.NOT_LOGIN);
 //        }
@@ -73,7 +73,7 @@ public class ChatController {
 
     @GetMapping("chat-created-list")
     public BaseResponse<Page<Chat>> getChatsCreateByUser(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, HttpServletRequest request) {
-        User loginUser = userService.getLoginUser(request);
+        User loginUser = userService.getLoginUserByToken(request);
         if (loginUser == null) {
             throw new CustomException(ErrorCode.NOT_LOGIN);
         }
@@ -83,7 +83,7 @@ public class ChatController {
 
     @GetMapping("chat-joined-list")
     public BaseResponse<Page<Chat>> getChatsJoinedByUser(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, HttpServletRequest request) {
-        User loginUser = userService.getLoginUser(request);
+        User loginUser = userService.getLoginUserByToken(request);
         if (loginUser == null) {
             throw new CustomException(ErrorCode.NOT_LOGIN);
         }
@@ -99,7 +99,7 @@ public class ChatController {
 
     @PostMapping("join-chat")
     public BaseResponse<Boolean> joinTeam(@RequestBody ChatJoinRequest chatJoinRequest, HttpServletRequest request) {
-        User loginUser = userService.getLoginUser(request);
+        User loginUser = userService.getLoginUserByToken(request);
         if (loginUser == null) {
             throw new CustomException(ErrorCode.NOT_LOGIN);
         }
@@ -110,7 +110,7 @@ public class ChatController {
 
     @PostMapping("create-chat")
     public BaseResponse<Chat> createChat(@RequestBody ChatCreateRequest chatCreateRequest, HttpServletRequest request) {
-        User loginUser = userService.getLoginUser(request);
+        User loginUser = userService.getLoginUserByToken(request);
         if (loginUser == null) {
             throw new CustomException(ErrorCode.NOT_LOGIN);
         }
@@ -120,7 +120,7 @@ public class ChatController {
 
     @GetMapping("delete-chat/{id}")
     public BaseResponse<Boolean> deleteChat(@PathVariable("id") long chatId, HttpServletRequest request) {
-        User loginUser = userService.getLoginUser(request);
+        User loginUser = userService.getLoginUserByToken(request);
         if (loginUser == null) {
             throw new CustomException(ErrorCode.NOT_LOGIN);
         }
@@ -138,7 +138,7 @@ public class ChatController {
 
     @PostMapping("edit-chat/{id}")
     public BaseResponse<Chat> editChat(@PathVariable("id") long chatId, @RequestBody ChatEditRequest chatEditRequest, HttpServletRequest request) {
-        User loginUser = userService.getLoginUser(request);
+        User loginUser = userService.getLoginUserByToken(request);
         if (loginUser == null) {
             throw new CustomException(ErrorCode.NOT_LOGIN);
         }
@@ -160,7 +160,7 @@ public class ChatController {
 
     @GetMapping("quit-chat/{id}")
     public BaseResponse<Boolean> quitChat(@PathVariable("id") long chatId, HttpServletRequest request) {
-        User loginUser = userService.getLoginUser(request);
+        User loginUser = userService.getLoginUserByToken(request);
         if (loginUser == null) {
             throw new CustomException(ErrorCode.NOT_LOGIN);
         }

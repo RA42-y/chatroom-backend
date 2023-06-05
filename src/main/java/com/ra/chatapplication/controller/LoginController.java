@@ -5,7 +5,12 @@ import com.ra.chatapplication.model.entity.User;
 import com.ra.chatapplication.model.request.UserLoginRequest;
 import com.ra.chatapplication.model.request.UserResetPasswordRequest;
 import com.ra.chatapplication.service.UserService;
+import com.ra.chatapplication.utils.EmailUtils;
+import com.ra.chatapplication.utils.JwtUtils;
+//import com.ra.chatapplication.utils.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,6 +37,12 @@ public class LoginController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+//    @Autowired
+//    private TokenUtils tokenUtils;
+
+    @Autowired
+    private JwtUtils jwtUtils;
+
     @GetMapping("")
     public String getLogin(Model model) {
         model.addAttribute("userLoginRequest", new UserLoginRequest());
@@ -41,19 +52,24 @@ public class LoginController {
     @GetMapping("check")
     public String postCheckLogin(RedirectAttributes ra, HttpSession session, HttpServletRequest request) {
         User loginUser = userService.getLoginUser(request);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         System.out.println(loginUser.getEmail());
         if (!loginUser.isActive()) {
             session.invalidate();
             return "redirect:/login?blocked";
         }
-        if (loginUser.isFirstLogin()){
+        if (loginUser.isFirstLogin()) {
             ra.addFlashAttribute("user", loginUser);
             return "redirect:/login/reset-password";
         }
         if (loginUser.isAdmin()) {
             return "redirect:/admin/user-list";
         } else {
-            return "redirect:/chat"; // to change
+//            String token = tokenUtils.generateToken(loginUser.getEmail());
+//            String jwt = tokenProvider.createToken(authentication, rememberMe);
+            String token = jwtUtils.generateJwtToken(authentication);
+//            return "redirect:http://localhost:3000/?token=" + token; // to change
+            return "redirect:http://localhost:3000/chats?token=" + token;
         }
     }
 
@@ -68,13 +84,14 @@ public class LoginController {
         return "login/reset-password";
     }
 
-    private String getUserRawPassword(long userId){
+    private String getUserRawPassword(long userId) {
         return userService.getUserById(userId).getPassword();
     }
 
     @PostMapping("reset-password")
     public String postResetPassword(@ModelAttribute UserResetPasswordRequest userResetPasswordRequest, HttpServletRequest request, Model model) {
         User loginUser = userService.getLoginUser(request);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (userResetPasswordRequest.getPasswordNew().equals(userResetPasswordRequest.getPasswordValidation())) {
             if (userService.comparePasswords(userResetPasswordRequest.getPasswordNew(), getUserRawPassword(loginUser.getId()))) {
                 model.addAttribute("invalidNotChanged", true);
@@ -83,10 +100,12 @@ public class LoginController {
             loginUser.setPassword(passwordEncoder.encode(userResetPasswordRequest.getPasswordNew()));
             loginUser.setFirstLogin(false);
             userService.saveUser(loginUser);
-            if (loginUser.isAdmin()){
+            if (loginUser.isAdmin()) {
                 return "redirect:/admin/user-list";
             } else {
-                return "redirect:/chat"; // to change
+                String token = jwtUtils.generateJwtToken(authentication);
+//            return "redirect:http://localhost:3000/?token=" + token; // to change
+                return "redirect:http://localhost:3000/chats?token=" + token;
             }
         } else {
             model.addAttribute("invalid", true);

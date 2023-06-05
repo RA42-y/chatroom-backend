@@ -13,6 +13,8 @@ public enum ErrorCode {
 
     NO_AUTH(40101, "Unauthorized", ""),
 
+    INVALID_TOKEN(40102, "Token invalid", ""),
+
     FORBIDDEN(40301, "Forbidden access", ""),
 
     SYSTEM_ERROR(50000, "Internal server error", "");

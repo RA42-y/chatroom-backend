@@ -24,6 +24,9 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private JwtUtils jwtUtils;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
@@ -49,7 +52,8 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             if (isAdmin) {
                 response.sendRedirect("/admin/user-list");
             } else {
-                response.sendRedirect("/chat");
+                String token = jwtUtils.generateJwtToken(authentication);
+                response.sendRedirect("http://localhost:3000/chats?token=" + token);
             }
         }
         super.onAuthenticationSuccess(request, response, authentication);

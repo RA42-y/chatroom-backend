@@ -10,7 +10,10 @@ import com.ra.chatapplication.model.request.AdminCreateUserRequest;
 import com.ra.chatapplication.model.request.AdminEditUserRequest;
 import com.ra.chatapplication.model.request.UserLoginRequest;
 import com.ra.chatapplication.service.UserService;
+//import com.ra.chatapplication.utils.TokenUtils;
+import com.ra.chatapplication.utils.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,6 +37,9 @@ public class UserController {
     @Resource
     UserService userService;
 
+//    @Autowired
+//    private TokenUtils tokenUtils;
+
 //    @PostMapping("login")
 //    public User userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
 //        String userAccount = userLoginRequest.getEmail();
@@ -42,10 +48,12 @@ public class UserController {
 //        return user;
 //    }
 
+    @Autowired
+    private JwtUtils jwtUtils;
+
     @GetMapping("/current")
     public BaseResponse<User> getCurrentUser(HttpServletRequest request) {
-        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
-        User currentUser = (User) userObj;
+        User currentUser = userService.getLoginUserByToken(request);
         if (currentUser == null) {
             throw new CustomException(ErrorCode.NOT_LOGIN);
         }

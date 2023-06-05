@@ -6,6 +6,7 @@ import com.ra.chatapplication.exception.CustomException;
 import com.ra.chatapplication.model.entity.User;
 import com.ra.chatapplication.service.UserService;
 import com.ra.chatapplication.utils.EmailUtils;
+import com.ra.chatapplication.utils.JwtUtils;
 import com.ra.chatapplication.utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private EmailUtils emailUtils;
+
+    @Autowired
+    private JwtUtils jwtUtils;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -107,7 +111,6 @@ public class UserServiceImpl implements UserService {
         user.setAdmin(admin);
         return userRepository.save(user);
     }
-
 
     public void deleteUserById(long id) {
         userRepository.deleteById(id);
@@ -191,6 +194,21 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(ErrorCode.NO_AUTH);
         }
         return (User) userObj;
+    }
+
+    @Override
+    public User getLoginUserByToken(HttpServletRequest request) {
+        if (request == null) {
+            return null;
+        }
+        String token = jwtUtils.extractTokenFromRequest(request);
+        jwtUtils.validateJwtToken(token); // Validate the token before processing the request
+        String email = jwtUtils.getUserNameFromJwtToken(token);
+        User currentUser = userRepository.findByEmailIgnoreCase(email);
+        if (currentUser == null) {
+            throw new CustomException(ErrorCode.NOT_LOGIN);
+        }
+        return currentUser;
     }
 
     public boolean comparePasswords(String rawPassword, String encodedPassword) {

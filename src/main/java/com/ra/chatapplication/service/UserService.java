@@ -54,5 +54,7 @@ public interface UserService {
 
     User getLoginUser(HttpServletRequest request);
 
+    User getLoginUserByToken(HttpServletRequest request);
+
     boolean comparePasswords(String rawPassword, String encodedPassword);
 }
