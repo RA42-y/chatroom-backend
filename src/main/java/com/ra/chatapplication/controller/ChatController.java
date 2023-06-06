@@ -10,6 +10,7 @@ import com.ra.chatapplication.model.entity.User;
 import com.ra.chatapplication.model.request.ChatCreateRequest;
 import com.ra.chatapplication.model.request.ChatEditRequest;
 import com.ra.chatapplication.model.request.InviteUserRequest;
+import com.ra.chatapplication.model.request.RemoveUserRequest;
 import com.ra.chatapplication.service.ChatService;
 import com.ra.chatapplication.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * URL de base du endpoint : http://localhost:8080/admin<br>
@@ -95,6 +97,15 @@ public class ChatController {
     public BaseResponse<Chat> getChatInfo(@PathVariable("id") long chatId) {
         Chat chat = chatService.getChatById(chatId);
         return ResultUtils.success(chat);
+    }
+
+    @GetMapping("member-list/{id}")
+    public BaseResponse<List<User>> getMemberList(@PathVariable("id") long chatId) {
+        Chat chat = chatService.getChatById(chatId);
+        if (chat == null) {
+            throw new CustomException(ErrorCode.PARAMS_ERROR);
+        }
+        return ResultUtils.success(chat.getMembers());
     }
 
     @PostMapping("create-chat")
@@ -185,6 +196,32 @@ public class ChatController {
         }
         if (chatService.isUserCreator(chat, loginUser)) {
             chatService.addMemberToChat(chat, newMember);
+            chatService.saveChat(chat);
+        } else {
+            throw new CustomException(ErrorCode.NO_AUTH);
+        }
+        return ResultUtils.success(chat);
+    }
+
+    @PutMapping("remove-user/{id}")
+    public BaseResponse<Chat> removeUserFromChat(@PathVariable("id") long chatId, @RequestBody RemoveUserRequest removeUserRequest, HttpServletRequest request) {
+        User loginUser = userService.getLoginUserByToken(request);
+        if (loginUser == null) {
+            throw new CustomException(ErrorCode.NOT_LOGIN);
+        }
+        Chat chat = chatService.getChatById(chatId);
+        if (chat == null) {
+            throw new CustomException(ErrorCode.PARAMS_ERROR);
+        }
+        if (removeUserRequest == null) {
+            throw new CustomException(ErrorCode.PARAMS_ERROR);
+        }
+        User member = userService.getUserById(removeUserRequest.getUserId());
+        if (member == null || !chat.getMembers().contains(member)) {
+            throw new CustomException(ErrorCode.PARAMS_ERROR);
+        }
+        if (chatService.isUserCreator(chat, loginUser)) {
+            chatService.removeUserFromChat(chat, member);
             chatService.saveChat(chat);
         } else {
             throw new CustomException(ErrorCode.NO_AUTH);
