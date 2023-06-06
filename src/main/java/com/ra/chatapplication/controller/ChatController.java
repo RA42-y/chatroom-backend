@@ -5,26 +5,19 @@ import com.ra.chatapplication.common.BaseResponse;
 import com.ra.chatapplication.common.ErrorCode;
 import com.ra.chatapplication.common.ResultUtils;
 import com.ra.chatapplication.exception.CustomException;
-import com.ra.chatapplication.model.entity.User;
 import com.ra.chatapplication.model.entity.Chat;
+import com.ra.chatapplication.model.entity.User;
 import com.ra.chatapplication.model.request.ChatCreateRequest;
 import com.ra.chatapplication.model.request.ChatEditRequest;
-import com.ra.chatapplication.model.request.ChatJoinRequest;
-import com.ra.chatapplication.service.UserService;
+import com.ra.chatapplication.model.request.InviteUserRequest;
 import com.ra.chatapplication.service.ChatService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import com.ra.chatapplication.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.List;
 
 /**
  * URL de base du endpoint : http://localhost:8080/admin<br>
@@ -104,17 +97,6 @@ public class ChatController {
         return ResultUtils.success(chat);
     }
 
-    @PostMapping("join-chat")
-    public BaseResponse<Boolean> joinTeam(@RequestBody ChatJoinRequest chatJoinRequest, HttpServletRequest request) {
-        User loginUser = userService.getLoginUserByToken(request);
-        if (loginUser == null) {
-            throw new CustomException(ErrorCode.NOT_LOGIN);
-        }
-        boolean result = chatService.joinChat(chatJoinRequest, loginUser);
-        return ResultUtils.success(result);
-    }
-
-
     @PostMapping("create-chat")
     public BaseResponse<Chat> createChat(@RequestBody ChatCreateRequest chatCreateRequest, HttpServletRequest request) {
         User loginUser = userService.getLoginUserByToken(request);
@@ -182,6 +164,32 @@ public class ChatController {
             throw new CustomException(ErrorCode.NO_AUTH);
         }
         return ResultUtils.success(true);
+    }
+
+    @PutMapping("invite-user/{id}")
+    public BaseResponse<Chat> inviteUserToChat(@PathVariable("id") long chatId, @RequestBody InviteUserRequest inviteUserRequest, HttpServletRequest request) {
+        User loginUser = userService.getLoginUserByToken(request);
+        if (loginUser == null) {
+            throw new CustomException(ErrorCode.NOT_LOGIN);
+        }
+        Chat chat = chatService.getChatById(chatId);
+        if (chat == null) {
+            throw new CustomException(ErrorCode.PARAMS_ERROR);
+        }
+        if (inviteUserRequest == null) {
+            throw new CustomException(ErrorCode.PARAMS_ERROR);
+        }
+        User newMember = userService.getUserById(inviteUserRequest.getUserId());
+        if (newMember == null) {
+            throw new CustomException(ErrorCode.PARAMS_ERROR);
+        }
+        if (chatService.isUserCreator(chat, loginUser)) {
+            chatService.addMemberToChat(chat, newMember);
+            chatService.saveChat(chat);
+        } else {
+            throw new CustomException(ErrorCode.NO_AUTH);
+        }
+        return ResultUtils.success(chat);
     }
 
 }

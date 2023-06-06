@@ -2,7 +2,6 @@ package com.ra.chatapplication.service;
 
 import com.ra.chatapplication.model.entity.Chat;
 import com.ra.chatapplication.model.entity.User;
-import com.ra.chatapplication.model.request.ChatJoinRequest;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -38,8 +37,6 @@ public interface ChatService {
     void deleteChat(Chat chat);
 
     Chat editChat(Chat chat, String name, String description);
-
-    boolean joinChat(ChatJoinRequest chatJoinRequest, User loginUser);
 
     Chat createChat(String name, String description, User creator);
 

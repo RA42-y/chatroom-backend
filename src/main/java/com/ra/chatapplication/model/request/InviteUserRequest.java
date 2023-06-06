@@ -5,13 +5,15 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * Join chat request body
+ * Invite user to chat request body
  */
 @Data
-public class ChatJoinRequest implements Serializable {
+public class InviteUserRequest implements Serializable {
 
     /**
      * Chat id
      */
-    private Long chatId;
+    private Long userId;
+
+
 }

@@ -3,18 +3,14 @@ package com.ra.chatapplication.service.impl;
 import com.ra.chatapplication.dao.ChatRepository;
 import com.ra.chatapplication.model.entity.Chat;
 import com.ra.chatapplication.model.entity.User;
-import com.ra.chatapplication.model.request.ChatJoinRequest;
 import com.ra.chatapplication.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -102,14 +98,6 @@ public class ChatServiceImpl implements ChatService {
 //        }
         chatRepository.save(chat);
         chatRepository.delete(chat);
-    }
-
-
-    @Override
-    public boolean joinChat(ChatJoinRequest chatJoinRequest, User loginUser) {
-        Chat chat = chatRepository.findChatById(chatJoinRequest.getChatId());
-        addMemberToChat(chat, loginUser);
-        return true;
     }
 
     @Override
