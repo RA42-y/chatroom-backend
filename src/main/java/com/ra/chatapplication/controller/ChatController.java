@@ -217,7 +217,7 @@ public class ChatController {
             throw new CustomException(ErrorCode.PARAMS_ERROR);
         }
         User member = userService.getUserById(removeUserRequest.getUserId());
-        if (member == null || !chat.getMembers().contains(member)) {
+        if (member == null || !chatService.isUserMember(chat, member)) {
             throw new CustomException(ErrorCode.PARAMS_ERROR);
         }
         if (chatService.isUserCreator(chat, loginUser)) {
