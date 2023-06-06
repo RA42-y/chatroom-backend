@@ -12,7 +12,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -90,6 +92,15 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public void deleteChat(Chat chat) {
+        List<User> members = chat.getMembers();
+        members = new ArrayList<>();
+//        Iterator<User> iterator = members.iterator();
+//        while (iterator.hasNext()) {
+//            User member = iterator.next();
+//            removeUserFromChat(chat, member);
+//            iterator.remove();
+//        }
+        chatRepository.save(chat);
         chatRepository.delete(chat);
     }
 

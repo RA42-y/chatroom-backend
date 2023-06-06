@@ -52,14 +52,15 @@ public class ChatApplication {
         chatService.addMemberToChat(c3, u1);
         chatService.addMemberToChat(c3, u2);
 
+        chatService.saveChat(c3);
 
-//        chatService.saveChat(c1);
-//        chatService.addMemberToChat(c1, u3);
-//
-//        chatService.addMemberToChat(c2, u4);
-//        chatService.addMemberToChat(c2, u6);
+        Chat c4 = chatService.createChat("Chat 4", "Chat created by user 1", u1);
 
-        System.out.println(c1.getMembers());
+        chatService.addMemberToChat(c4, u7);
+        chatService.addMemberToChat(c4, u8);
+        chatService.addMemberToChat(c4, u9);
+
+        chatService.saveChat(c4);
 
         System.out.println(userService.getAllUsers());
     }

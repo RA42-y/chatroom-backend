@@ -22,6 +22,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import java.util.List;
 
 import static com.ra.chatapplication.constant.UserConstant.USER_LOGIN_STATE;
 
@@ -36,6 +39,12 @@ import static com.ra.chatapplication.constant.UserConstant.USER_LOGIN_STATE;
 public class UserController {
     @Resource
     UserService userService;
+
+    @GetMapping("all-user-list")
+    public BaseResponse<List<User>> getUserList() {
+        List<User> users = userService.getAllUsers();
+        return ResultUtils.success(users);
+    }
 
     @GetMapping("/current")
     public BaseResponse<User> getCurrentUser(HttpServletRequest request) {

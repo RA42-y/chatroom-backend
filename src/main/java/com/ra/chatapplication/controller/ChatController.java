@@ -63,13 +63,13 @@ public class ChatController {
 //    }
 
     @GetMapping("all-chat-list")
-    public BaseResponse<Page<Chat>> getAllChatList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, HttpServletRequest request) {
+    public BaseResponse<Page<Chat>> getAllChatList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size, HttpServletRequest request) {
         Page<Chat> chats = chatService.getAllChatsByPage(page, size);
         return ResultUtils.success(chats);
     }
 
     @GetMapping("my-chat-list")
-    public BaseResponse<Page<Chat>> getChatsOfUser(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, HttpServletRequest request) {
+    public BaseResponse<Page<Chat>> getChatsOfUser(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size, HttpServletRequest request) {
         User loginUser = userService.getLoginUserByToken(request);
         if (loginUser == null) {
             throw new CustomException(ErrorCode.NOT_LOGIN);
@@ -79,7 +79,7 @@ public class ChatController {
     }
 
     @GetMapping("created-chat-list")
-    public BaseResponse<Page<Chat>> getChatsCreateByUser(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, HttpServletRequest request) {
+    public BaseResponse<Page<Chat>> getChatsCreateByUser(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size, HttpServletRequest request) {
         User loginUser = userService.getLoginUserByToken(request);
         if (loginUser == null) {
             throw new CustomException(ErrorCode.NOT_LOGIN);
@@ -89,7 +89,7 @@ public class ChatController {
     }
 
     @GetMapping("joined-chat-list")
-    public BaseResponse<Page<Chat>> getChatsJoinedByUser(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, HttpServletRequest request) {
+    public BaseResponse<Page<Chat>> getChatsJoinedByUser(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size, HttpServletRequest request) {
         User loginUser = userService.getLoginUserByToken(request);
         if (loginUser == null) {
             throw new CustomException(ErrorCode.NOT_LOGIN);
@@ -125,7 +125,7 @@ public class ChatController {
         return ResultUtils.success(chat);
     }
 
-    @GetMapping("delete-chat/{id}")
+    @DeleteMapping("delete-chat/{id}")
     public BaseResponse<Boolean> deleteChat(@PathVariable("id") long chatId, HttpServletRequest request) {
         User loginUser = userService.getLoginUserByToken(request);
         if (loginUser == null) {
