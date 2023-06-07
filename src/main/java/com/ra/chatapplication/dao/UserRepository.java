@@ -10,18 +10,13 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * UserRepository is a repository interface for performing CRUD operations on User entities.
+ */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    List<User> findByActiveTrue();
-
-    List<User> findByActiveFalse();
-
     Page<User> findByActiveFalse(Pageable pageable);
-
-    List<User> findByFirstNameContainingIgnoreCase(String firstName);
-
-    List<User> findByLastNameContainingIgnoreCase(String lastName);
 
     User findByEmailIgnoreCase(String email);
 
@@ -32,24 +27,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<User> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(String firstName, String lastName, String email, Pageable pageable);
 
     Page<User> findByFirstNameContainingIgnoreCaseAndActiveFalseOrLastNameContainingIgnoreCaseAndActiveFalseOrEmailContainingIgnoreCaseAndActiveFalse(String firstName, String lastName, String email, Pageable pageable);
-
-    Page<User> findAllByOrderByFirstNameAsc(Pageable pageable);
-
-    Page<User> findAllByOrderByFirstNameDesc(Pageable pageable);
-
-    Page<User> findAllByOrderByLastNameAsc(Pageable pageable);
-
-    Page<User> findAllByOrderByLastNameDesc(Pageable pageable);
-
-    Page<User> findAllByOrderByEmailAsc(Pageable pageable);
-
-    Page<User> findAllByOrderByEmailDesc(Pageable pageable);
-
-//    User findCurrentUser();
-
-    User findByEmailAndPassword(@Param("email") String email, @Param("password") String password);
-
-//    // Requete creee manuellement
-//    @Query("SELECT u FROM User u WHERE LENGTH(u.lastName) >= :lastNameLength")
-//    List<User> findByLastNameLength(@Param("lastNameLength") int lastNameLength);
 }

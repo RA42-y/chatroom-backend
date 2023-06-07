@@ -1,13 +1,11 @@
 package com.ra.chatapplication.utils;
 
-//package com.bezkoder.springjwt.security.jwt;
-
-import java.security.Key;
-import java.util.Date;
 
 import com.ra.chatapplication.common.ErrorCode;
 import com.ra.chatapplication.exception.CustomException;
-import com.ra.chatapplication.model.entity.User;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,12 +13,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-
 import javax.servlet.http.HttpServletRequest;
+import java.security.Key;
+import java.util.Date;
 
+/**
+ * Utility class for JWT (JSON Web Token) operations.
+ */
 @Component
 public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
@@ -31,10 +30,7 @@ public class JwtUtils {
     @Value("${ra.app.jwtExpirationMs}")
     private int jwtExpirationMs;
 
-    public String generateJwtToken(Authentication authentication) {
-
-//        User user = (User) authentication.getPrincipal();
-
+    public String generateJwtToken() {
         Authentication loginUser = SecurityContextHolder.getContext().getAuthentication();
         String email = loginUser.getName();
 

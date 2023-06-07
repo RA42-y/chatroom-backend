@@ -3,7 +3,6 @@ package com.ra.chatapplication.common;
 /**
  * return utils class
  *
- * @author shizhuzexuan
  */
 public class ResultUtils {
 

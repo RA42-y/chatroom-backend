@@ -5,9 +5,7 @@ import com.ra.chatapplication.model.entity.User;
 import com.ra.chatapplication.model.request.UserLoginRequest;
 import com.ra.chatapplication.model.request.UserResetPasswordRequest;
 import com.ra.chatapplication.service.UserService;
-import com.ra.chatapplication.utils.EmailUtils;
 import com.ra.chatapplication.utils.JwtUtils;
-//import com.ra.chatapplication.utils.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,11 +19,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import static com.ra.chatapplication.constant.UserConstant.USER_LOGIN_STATE;
-
 /**
- * URL de base du endpoint : http://localhost:8080/admin<br>
- * ex users : http://localhost:8080/admin/users
+ * The LoginController class handles the requests related to user login and authentication.
+ * Base URL of the endpoint: http://localhost:8080/login
  */
 @Controller
 @RequestMapping(value = {"login"})
@@ -37,20 +33,31 @@ public class LoginController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-//    @Autowired
-//    private TokenUtils tokenUtils;
-
     @Autowired
     private JwtUtils jwtUtils;
 
+    /**
+     * Displays the form for logging in.
+     *
+     * @param model The model to hold the login form
+     * @return The view name for login page
+     */
     @GetMapping("")
     public String getLogin(Model model) {
         model.addAttribute("userLoginRequest", new UserLoginRequest());
         return "login/login";
     }
 
+    /**
+     * Check the user's role and login status and redirect user to correspond page.
+     *
+     * @param ra      The RedirectAttributes object for adding flash attributes
+     * @param session The HttpSession object containing the user's session
+     * @param request The HttpServletRequest object containing the user's request
+     * @return The redirect URL based on the user's role and login status
+     */
     @GetMapping("check")
-    public String postCheckLogin(RedirectAttributes ra, HttpSession session, HttpServletRequest request) {
+    public String getCheckLogin(RedirectAttributes ra, HttpSession session, HttpServletRequest request) {
         User loginUser = userService.getLoginUser(request);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         System.out.println(loginUser.getEmail());
@@ -65,14 +72,18 @@ public class LoginController {
         if (loginUser.isAdmin()) {
             return "redirect:/admin/user-list";
         } else {
-//            String token = tokenUtils.generateToken(loginUser.getEmail());
-//            String jwt = tokenProvider.createToken(authentication, rememberMe);
-            String token = jwtUtils.generateJwtToken(authentication);
-//            return "redirect:http://localhost:3000/?token=" + token; // to change
+            String token = jwtUtils.generateJwtToken();
             return "redirect:http://localhost:3000/chats?token=" + token;
         }
     }
 
+    /**
+     * Displays the form for resetting password.
+     *
+     * @param model   The model to hold the login form
+     * @param request The HttpServletRequest object containing the user's request
+     * @return The view name for resetting password.
+     */
     @GetMapping("reset-password")
     public String getResetPassword(Model model, HttpServletRequest request) {
         User loginUser = userService.getLoginUser(request);
@@ -84,10 +95,24 @@ public class LoginController {
         return "login/reset-password";
     }
 
+    /**
+     * Retrieves the raw password of a user by their ID.
+     *
+     * @param userId The ID of the user
+     * @return The raw password of the user
+     */
     private String getUserRawPassword(long userId) {
         return userService.getUserById(userId).getPassword();
     }
 
+    /**
+     * Handles the submission of the reset password form.
+     *
+     * @param userResetPasswordRequest the UserResetPasswordRequest object containing the new password
+     * @param request                  The HttpServletRequest object containing the user's request
+     * @param model                    The model to hold the result data
+     * @return The redirect URL based on the user's role and login status
+     */
     @PostMapping("reset-password")
     public String postResetPassword(@ModelAttribute UserResetPasswordRequest userResetPasswordRequest, HttpServletRequest request, Model model) {
         User loginUser = userService.getLoginUser(request);
@@ -103,8 +128,7 @@ public class LoginController {
             if (loginUser.isAdmin()) {
                 return "redirect:/admin/user-list";
             } else {
-                String token = jwtUtils.generateJwtToken(authentication);
-//            return "redirect:http://localhost:3000/?token=" + token; // to change
+                String token = jwtUtils.generateJwtToken();
                 return "redirect:http://localhost:3000/chats?token=" + token;
             }
         } else {
@@ -113,6 +137,12 @@ public class LoginController {
         }
     }
 
+    /**
+     * Handles request to log out and invalidates the user's session.
+     *
+     * @param session The HttpSession object containing the user's session
+     * @return the redirect URL to the login page after logged out
+     */
     @GetMapping("/logout")
     public String getLogout(HttpSession session) {
         session.invalidate();

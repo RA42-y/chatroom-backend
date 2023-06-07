@@ -6,7 +6,6 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.ra.chatapplication.model.entity.User;
 import com.ra.chatapplication.service.UserService;
@@ -18,6 +17,10 @@ import org.springframework.stereotype.Component;
 
 import static com.ra.chatapplication.constant.UserConstant.USER_LOGIN_STATE;
 
+/**
+ * CustomAuthenticationSuccessHandler is responsible for handling successful authentication.
+ * It updates user data, resets user's failure login attempts counter and redirects user to the appropriate page according to their role.
+ */
 @Component
 public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
@@ -30,7 +33,6 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
-//        User user = (User) authentication.getPrincipal();
         Authentication loginUser = SecurityContextHolder.getContext().getAuthentication();
         String email = loginUser.getName();
         User user = userService.getUserByEmail(email);
@@ -52,7 +54,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             if (isAdmin) {
                 response.sendRedirect("/admin/user-list");
             } else {
-                String token = jwtUtils.generateJwtToken(authentication);
+                String token = jwtUtils.generateJwtToken();
                 response.sendRedirect("http://localhost:3000/chats?token=" + token);
             }
         }

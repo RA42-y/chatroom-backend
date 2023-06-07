@@ -6,31 +6,17 @@ import com.ra.chatapplication.common.ErrorCode;
 import com.ra.chatapplication.common.ResultUtils;
 import com.ra.chatapplication.exception.CustomException;
 import com.ra.chatapplication.model.entity.User;
-import com.ra.chatapplication.model.request.AdminCreateUserRequest;
-import com.ra.chatapplication.model.request.AdminEditUserRequest;
-import com.ra.chatapplication.model.request.UserLoginRequest;
 import com.ra.chatapplication.service.UserService;
-//import com.ra.chatapplication.utils.TokenUtils;
-import com.ra.chatapplication.utils.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import java.util.List;
 
-import static com.ra.chatapplication.constant.UserConstant.USER_LOGIN_STATE;
-
 /**
- * URL de base du endpoint : http://localhost:8080/admin<br>
- * ex users : http://localhost:8080/admin/users
+ * The UserController class handles the HTTP requests related to user.
+ * Base URL of the endpoint: http://localhost:8080/user
  */
 @RestController
 @RequestMapping("/user")
@@ -40,12 +26,24 @@ public class UserController {
     @Resource
     UserService userService;
 
+    /**
+     * Retrieves a list of all users.
+     *
+     * @return A BaseResponse containing the list of users
+     */
     @GetMapping("all-user-list")
     public BaseResponse<List<User>> getUserList() {
         List<User> users = userService.getAllUsers();
         return ResultUtils.success(users);
     }
 
+    /**
+     * Retrieves the information of the logged-in user
+     *
+     * @param request The HttpServletRequest object containing the user's request
+     * @return A BaseResponse containing the user information
+     * @throws CustomException If the user is not logged in
+     */
     @GetMapping("/current")
     public BaseResponse<User> getCurrentUser(HttpServletRequest request) {
         User currentUser = userService.getLoginUserByToken(request);
@@ -53,12 +51,18 @@ public class UserController {
             throw new CustomException(ErrorCode.NOT_LOGIN);
         }
         long userId = currentUser.getId();
-        // TODO 校验用户是否合法
         User user = userService.getUserById(userId);
         User safetyUser = userService.getSafetyUser(user);
         return ResultUtils.success(safetyUser);
     }
 
+    /**
+     * Retrieves the information of a user with the specified ID.
+     *
+     * @param userId The ID of the user
+     * @return A BaseResponse containing the user information
+     * @throws CustomException If the ID is invalid, the user is not found
+     */
     @GetMapping("user-info/{id}")
     public BaseResponse<User> getUserInfo(@PathVariable("id") long userId) {
         if (userId <= 0) {

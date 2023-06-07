@@ -5,13 +5,13 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * Invite user to chat request body
+ * Request body fot removing a user from chat
  */
 @Data
 public class RemoveUserRequest implements Serializable {
 
     /**
-     * Chat id
+     * User ID
      */
     private Long userId;
 

@@ -15,42 +15,75 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * User entity
+ */
 @Entity
 @Data
 @ToString
 @Table(name = "user")
 public class User implements Serializable, UserDetails {
+    /**
+     * ID
+     */
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long id;
 
+    /**
+     * First name
+     */
     @Column(name = "first_name")
     @Size(min = 2)
     @NotEmpty(message = "firstname required")
     private String firstName;
 
+    /**
+     * Last name
+     */
     @Column(name = "last_name")
     @Size(min = 2)
     @NotEmpty(message = "lastname required")
     private String lastName;
 
+    /**
+     * Email
+     */
     @Column
     @Email
     private String email;
 
+    /**
+     * Password
+     */
     @Column
     @Size(min = 8)
     private String password;
 
+    /**
+     * Role
+     * admin - true, user - false
+     */
     @Column
     private Boolean admin = false;
 
+    /**
+     * Account status
+     * activated - true, deactivated - false
+     */
     @Column
     private Boolean active = true;
 
+    /**
+     * Login status
+     * first time to log in - true, not the first time (user has reset the password) - false
+     */
     @Column
     private Boolean firstLogin = true;
 
+    /**
+     * The number of failed login attempts
+     */
     @Column
     private Integer failureTimes = 0;
 

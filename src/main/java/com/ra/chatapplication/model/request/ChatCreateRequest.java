@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * Create chat request body
+ * Request body for creating a chat
  */
 @Data
 public class ChatCreateRequest implements Serializable {

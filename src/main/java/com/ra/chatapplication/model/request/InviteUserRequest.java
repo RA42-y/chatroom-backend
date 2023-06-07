@@ -5,13 +5,13 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * Invite user to chat request body
+ * Request body fot inviting a user to chat
  */
 @Data
 public class InviteUserRequest implements Serializable {
 
     /**
-     * Chat id
+     * User ID
      */
     private Long userId;
 

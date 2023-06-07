@@ -2,7 +2,6 @@ package com.ra.chatapplication.config;
 
 import com.ra.chatapplication.utils.CustomAuthenticationFailureHandler;
 import com.ra.chatapplication.utils.CustomAuthenticationSuccessHandler;
-import com.ra.chatapplication.utils.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,17 +9,17 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-
+/**
+ * SecurityConfig is a configuration class for Spring Security in the application.
+ * It enables web security and provides configurations for authentication and authorization.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -34,48 +33,61 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private CustomAuthenticationSuccessHandler authenticationSuccessHandler;
 
+    /**
+     * Configures the authentication manager to use the UserDetailsService for user authentication and sets the password encoder.
+     *
+     * @param auth AuthenticationManagerBuilder object
+     * @throws Exception if an error occurs during configuration
+     */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 
+    /**
+     * Configures the HTTP security for the application.
+     *
+     * @param http HttpSecurity object
+     * @throws Exception if an error occurs during configuration
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .cors().and()
-            .csrf().disable() // for test only
-            .authorizeRequests()
+                .cors().and() // cross-origin
+                .csrf().disable() // for test only
+                .authorizeRequests()
                 .antMatchers("/").permitAll()
                 .antMatchers("/login/**").permitAll()
-//                .antMatchers("/authenticate").permitAll()
                 .antMatchers("/admin/**").hasRole("ADMIN") // Role-based authorization
-//                .antMatchers("/chat/**").hasRole("USER")
-                .antMatchers("/chat/**").permitAll()
+                .antMatchers("/chat/**").hasRole("USER")
                 .antMatchers("/websocket/**").permitAll()
-//                .anyRequest().authenticated()
+                .anyRequest().authenticated()
                 .and()
-            .formLogin()
+                .formLogin()
                 .loginPage("/login").permitAll()
                 .usernameParameter("email")
                 .passwordParameter("password")
-//                .loginProcessingUrl("/authenticate").permitAll()
-//                .defaultSuccessUrl("/login/check", true)
                 .successForwardUrl("/login/check")
                 .successHandler(authenticationSuccessHandler)
                 .failureHandler(authenticationFailureHandler)
                 .and()
-            .logout()
+                .logout()
                 .logoutUrl("/login/logout")
                 .logoutSuccessUrl("/login?logout")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .and()
-            .sessionManagement()
+                .sessionManagement()
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(false)
                 .expiredUrl("/login?expired");
     }
 
+    /**
+     * Creates a CorsConfigurationSource bean to configure CORS (Cross-Origin Resource Sharing).
+     *
+     * @return CorsConfigurationSource bean
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -87,6 +99,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return source;
     }
 
+    /**
+     * Creates a PasswordEncoder bean to encode passwords.
+     *
+     * @return PasswordEncoder bean
+     */
     @Bean
     public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

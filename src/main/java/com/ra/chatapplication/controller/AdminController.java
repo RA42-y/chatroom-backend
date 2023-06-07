@@ -15,15 +15,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
-import static com.ra.chatapplication.constant.UserConstant.USER_LOGIN_STATE;
-
 /**
- * URL de base du endpoint : http://localhost:8080/admin<br>
- * ex users : http://localhost:8080/admin/users
+ * The AdminController class handles admin-related operations.
+ * Base URL of the endpoint: http://localhost:8080/admin
  */
 @Controller
 @RequestMapping("admin")
@@ -35,15 +31,18 @@ public class AdminController {
     @Resource
     ChatService chatService;
 
-//    @GetMapping("user-list")
-//    public String getUserList(Model model) {
-//        List<User> users = userService.getAllUsers();
-//        model.addAttribute("users", users);
-//        return "admin/user-list";
-//    }
-
+    /**
+     * Retrieves a paginated list of all users for display in the user list page.
+     *
+     * @param page    The page number (default: 0)
+     * @param size    The number of users per page (default: 7)
+     * @param sortBy  The field to sort the users by (default: "")
+     * @param keyword The keyword for searching users by name or email (default: "")
+     * @param model   The model to hold the user list and other attributes
+     * @return The view name for displaying the user list page
+     */
     @GetMapping("user-list")
-    public String getUserList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, @RequestParam(defaultValue = "") String sortBy, @RequestParam(defaultValue = "") String keyword, Model model, HttpSession session) {
+    public String getUserList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, @RequestParam(defaultValue = "") String sortBy, @RequestParam(defaultValue = "") String keyword, Model model) {
         if (keyword.equals("")) {
             Page<User> users = userService.getAllUsersByPage(page, size, sortBy);
             model.addAttribute("users", users);
@@ -53,17 +52,19 @@ public class AdminController {
         }
         model.addAttribute("sortBy", sortBy);
         model.addAttribute("keyword", keyword);
-//        System.out.println(session.getAttribute(USER_LOGIN_STATE));
         return "admin/user-list";
     }
 
-//    @GetMapping("deactivated-user-list")
-//    public String getDeactivatedUserList(Model model) {
-//        List<User> users = userService.getAllDeactivatedUsers();
-//        model.addAttribute("users", users);
-//        return "admin/deactivated-user-list";
-//    }
-
+    /**
+     * Retrieves a paginated list of all deactivated users for display in the deactivated user list page.
+     *
+     * @param page    The page number (default: 0)
+     * @param size    The number of users per page (default: 7)
+     * @param sortBy  The field to sort the users by (default: "")
+     * @param keyword The keyword for searching users by name or email (default: "")
+     * @param model   The model to hold the deactivated user list and other attributes
+     * @return The view name for displaying the deactivated user list page
+     */
     @GetMapping("deactivated-user-list")
     public String getDeactivatedUserList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, @RequestParam(defaultValue = "") String sortBy, @RequestParam(defaultValue = "") String keyword, Model model) {
         if (keyword.equals("")) {
@@ -78,12 +79,26 @@ public class AdminController {
         return "admin/deactivated-user-list";
     }
 
+    /**
+     * Displays the form for creating a new user by the admin.
+     *
+     * @param model The model to hold the form data
+     * @return The view name for displaying the create user page
+     */
     @GetMapping("create-user")
     public String getCreateUser(Model model) {
         model.addAttribute("adminCreateUserRequest", new AdminCreateUserRequest());
         return "admin/create-user";
     }
 
+    /**
+     * Handles the submission of the create user form by the admin.
+     *
+     * @param adminCreateUserRequest The create user request data
+     * @param model                  The model to hold the result data
+     * @return The view name for displaying the create user page with the result message
+     * @throws MessagingException if there is an error sending the email notification
+     */
     @PostMapping("create-user")
     public String postCreateUser(@ModelAttribute AdminCreateUserRequest adminCreateUserRequest, Model model) throws MessagingException {
         String email = adminCreateUserRequest.getEmail();
@@ -102,6 +117,13 @@ public class AdminController {
         return "admin/create-user";
     }
 
+    /**
+     * Deactivates a user with the specified ID.
+     *
+     * @param userId The ID of the user to deactivate
+     * @param ra     The RedirectAttributes object to hold the result data
+     * @return The redirection URL to the user list page
+     */
     @GetMapping("deactivate-user/{id}")
     public String getDeactivateUser(@PathVariable("id") long userId, RedirectAttributes ra) {
         User user = userService.getUserById(userId);
@@ -116,6 +138,13 @@ public class AdminController {
         return "redirect:/admin/user-list";
     }
 
+    /**
+     * Activates a user with the specified ID.
+     *
+     * @param userId The ID of the user to activate
+     * @param ra     The RedirectAttributes object to hold the result data
+     * @return The redirection URL to the user list page
+     */
     @GetMapping("activate-user/{id}")
     public String getActivateUser(@PathVariable("id") long userId, RedirectAttributes ra) {
         User user = userService.getUserById(userId);
@@ -132,6 +161,13 @@ public class AdminController {
         return "redirect:/admin/user-list";
     }
 
+    /**
+     * Deletes a user with the specified ID.
+     *
+     * @param userId The ID of the user to delete
+     * @param ra     The RedirectAttributes object to hold the result data
+     * @return The redirection URL to the user list page
+     */
     @GetMapping("delete-user/{id}")
     public String getDeleteUser(@PathVariable("id") long userId, RedirectAttributes ra) {
         User user = userService.getUserById(userId);
@@ -157,6 +193,13 @@ public class AdminController {
         return "redirect:/admin/user-list";
     }
 
+    /**
+     * Displays the form for editing a user's details.
+     *
+     * @param userId The ID of the user to edit
+     * @param model  The model to hold the form data and user details
+     * @return The view name for displaying the edit user page
+     */
     @GetMapping("edit-user/{id}")
     public String getEditUser(@PathVariable("id") long userId, Model model) {
         User user = userService.getUserById(userId);
@@ -166,6 +209,14 @@ public class AdminController {
         return "admin/edit-user";
     }
 
+    /**
+     * Handles the submission of the user edit form.
+     *
+     * @param userId               The ID of the user to edit
+     * @param adminEditUserRequest The request object containing the updated user details
+     * @param ra                   The redirect attributes to hold the result data
+     * @return The redirection URL to the user list page
+     */
     @PostMapping("edit-user/{id}")
     public String postEditUser(@PathVariable("id") long userId, @ModelAttribute AdminEditUserRequest adminEditUserRequest, RedirectAttributes ra) {
         User user = userService.getUserById(userId);

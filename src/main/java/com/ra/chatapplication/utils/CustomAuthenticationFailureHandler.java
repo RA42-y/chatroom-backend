@@ -5,7 +5,6 @@ import com.ra.chatapplication.model.entity.User;
 import com.ra.chatapplication.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +13,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * CustomAuthenticationFailureHandler is responsible for handling failed authentication attempts.
+ * It increments user's failure login attempts counter, blocks user's account after more than 3 failure and redirects user to the appropriate page.
+ */
 @Component
 public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
@@ -31,7 +34,7 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
             userService.saveUser(user);
             System.out.println(email + " failed attempts: " + failureTimes);
             if (failureTimes > 3) {
-                if (user.isActive()){
+                if (user.isActive()) {
                     userService.deactivateUser(user);
                 }
                 System.out.println("Account blacked after " + failureTimes + " attempts failed.");

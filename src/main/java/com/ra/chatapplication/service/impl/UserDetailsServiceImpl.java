@@ -1,4 +1,4 @@
-package com.ra.chatapplication.utils;
+package com.ra.chatapplication.service.impl;
 
 import com.ra.chatapplication.model.entity.User;
 import com.ra.chatapplication.service.UserService;
@@ -13,6 +13,10 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * UserDetailsServiceImpl is an implementation of the UserDetailsService interface provided by Spring Security.
+ * It is responsible for loading user details and creating a UserDetails object for authentication and authorization.
+ */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
@@ -27,7 +31,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("User not found");
         }
 
-        // Create and return a UserDetails implementation based on your User entity
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
@@ -39,7 +42,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         );
     }
 
-    // Helper method to convert custom roles to Spring Security's GrantedAuthority
     private List<GrantedAuthority> getAuthorities(boolean isAdmin) {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));

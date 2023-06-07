@@ -10,16 +10,15 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * ChatRepository is a repository interface for performing CRUD operations on Chat entities.
+ */
 @Repository
 public interface ChatRepository extends JpaRepository<Chat, Long> {
 
     Page<Chat> findAll(Pageable pageable);
 
-    List<Chat> findChatsByCreator(User creator);
-
     Chat findChatById(long id);
-
-    List<Chat> findChatsByMembersContaining(User user);
 
     List<Chat> findByCreator(User creator);
 
@@ -31,44 +30,4 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
 
     Page<Chat> findByMembersContainingOrCreator(User member, User creator, Pageable pageable);
 
-
-//    List<User> findByActiveTrue();
-//
-//    List<User> findByActiveFalse();
-//
-//    Page<User> findByActiveFalse(Pageable pageable);
-//
-//    List<User> findByFirstNameContainingIgnoreCase(String firstName);
-//
-//    List<User> findByLastNameContainingIgnoreCase(String lastName);
-//
-//    User findByEmailIgnoreCase(String email);
-//
-//    User findById(long id);
-//
-//    Page<User> findAll(Pageable pageable);
-//
-//    Page<User> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(String firstName, String lastName, String email, Pageable pageable);
-//
-//    Page<User> findByFirstNameContainingIgnoreCaseAndActiveFalseOrLastNameContainingIgnoreCaseAndActiveFalseOrEmailContainingIgnoreCaseAndActiveFalse(String firstName, String lastName, String email, Pageable pageable);
-//
-//    Page<User> findAllByOrderByFirstNameAsc(Pageable pageable);
-//
-//    Page<User> findAllByOrderByFirstNameDesc(Pageable pageable);
-//
-//    Page<User> findAllByOrderByLastNameAsc(Pageable pageable);
-//
-//    Page<User> findAllByOrderByLastNameDesc(Pageable pageable);
-//
-//    Page<User> findAllByOrderByEmailAsc(Pageable pageable);
-//
-//    Page<User> findAllByOrderByEmailDesc(Pageable pageable);
-//
-////    User findCurrentUser();
-//
-//    User findByEmailAndPassword(@Param("email") String email, @Param("password") String password);
-//
-////    // Requete creee manuellement
-////    @Query("SELECT u FROM User u WHERE LENGTH(u.lastName) >= :lastNameLength")
-////    List<User> findByLastNameLength(@Param("lastNameLength") int lastNameLength);
 }

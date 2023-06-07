@@ -8,7 +8,6 @@ import java.io.Serializable;
  * BaseResponse class
  *
  * @param <T>
- * @author shizhuzexuan
  */
 @Data
 public class BaseResponse<T> implements Serializable {

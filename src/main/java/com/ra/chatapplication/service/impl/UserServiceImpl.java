@@ -13,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -41,9 +40,7 @@ public class UserServiceImpl implements UserService {
     public User userLogin(String email, String password, HttpServletRequest request) {
         User user = userRepository.findByEmailIgnoreCase(email);
         if (user != null && user.getPassword().equals(password)) {
-            // 3. 用户脱敏
             User safetyUser = getSafetyUser(user);
-            // 4. 记录用户的登录态
             request.getSession().setAttribute(USER_LOGIN_STATE, safetyUser);
             return safetyUser;
         }
@@ -78,10 +75,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByActiveFalse(pageable);
     }
 
-    public List<User> getAllDeactivatedUsers() {
-        return userRepository.findByActiveFalse();
-    }
-
     public User createUser(String firstName, String lastName, String email, String password, Boolean admin) {
         String encodedPassword = passwordEncoder.encode(password);
         User user = new User(firstName, lastName, email, encodedPassword, admin);
@@ -100,36 +93,36 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    public User saveUser(User user) {
-        return userRepository.save(user);
+    public void saveUser(User user) {
+        userRepository.save(user);
     }
 
     @Override
-    public User editUser(User user, String firstName, String lastName, Boolean admin) {
+    public void editUser(User user, String firstName, String lastName, Boolean admin) {
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setAdmin(admin);
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     public void deleteUserById(long id) {
         userRepository.deleteById(id);
     }
 
-    public User deactivateUser(User user) {
+    public void deactivateUser(User user) {
         user.setActive(false);
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
-    public User activateUser(User user) {
+    public void activateUser(User user) {
         user.setActive(true);
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     @Override
-    public User resetUserFailureTimes(User user) {
+    public void resetUserFailureTimes(User user) {
         user.setFailureTimes(0);
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     public Page<User> searchUsers(String keyword, int pageNumber, int pageSize, String sortBy) {
@@ -152,21 +145,8 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByFirstNameContainingIgnoreCaseAndActiveFalseOrLastNameContainingIgnoreCaseAndActiveFalseOrEmailContainingIgnoreCaseAndActiveFalse(keyword, keyword, keyword, pageable);
     }
 
-    public List<User> findUsersByFirstName(String firstName) {
-        return userRepository.findByFirstNameContainingIgnoreCase(firstName);
-    }
-
-    public List<User> findUsersByLastName(String lastName) {
-        return userRepository.findByLastNameContainingIgnoreCase(lastName);
-    }
-
     public User getUserByEmail(String email) {
         System.out.println(email);
-        return userRepository.findByEmailIgnoreCase(email);
-    }
-
-    public User findCurrentUser() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByEmailIgnoreCase(email);
     }
 

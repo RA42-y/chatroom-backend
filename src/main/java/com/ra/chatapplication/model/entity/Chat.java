@@ -12,35 +12,62 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Chat entity
+ */
 @Entity
 @Data
 @ToString
 @Table(name = "chat")
 @EntityListeners(AuditingEntityListener.class)
 public class Chat implements Serializable {
+    /**
+     * ID
+     */
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * Name
+     */
     @Column
     private String name;
 
+    /**
+     * Description
+     */
     @Column
     private String description;
 
+    /**
+     * The creator of the chat
+     */
     @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "user")
     private User creator;
 
+    /**
+     * The date time of creation of the chat
+     */
     @CreatedDate
     private Date createDate;
 
+    /**
+     * The date of expiration of the chat
+     */
     @Column
     private Date expireDate;
 
+    /**
+     * The last modified date time of the chat
+     */
     @LastModifiedDate
     private Date lastModifiedDate;
 
+    /**
+     * The list of users added in the chat as member
+     */
     @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(name = "chat_user",
             joinColumns = @JoinColumn(name = "chat_id"),

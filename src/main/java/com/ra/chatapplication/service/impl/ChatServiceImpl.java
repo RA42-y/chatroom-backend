@@ -32,9 +32,8 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public Chat addMemberToChat(Chat chat, User member) {
+    public void addMemberToChat(Chat chat, User member) {
         chat.getMembers().add(member);
-        return chat;
     }
 
     @Override
@@ -69,21 +68,19 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public Chat removeCreator(Chat chat) {
+    public void removeCreator(Chat chat) {
         chat.setCreator(null);
-        return chat;
     }
 
     @Override
-    public Chat removeUserFromChat(Chat chat, User user) {
+    public void removeUserFromChat(Chat chat, User user) {
         List<User> members = chat.getMembers();
         members.remove(user);
-        return chat;
     }
 
     @Override
-    public Chat saveChat(Chat chat) {
-        return chatRepository.save(chat);
+    public void saveChat(Chat chat) {
+        chatRepository.save(chat);
     }
 
     @Override
@@ -108,10 +105,9 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public Chat editChat(Chat chat, String name, String description) {
+    public void editChat(Chat chat, String name, String description) {
         chat.setName(name);
         chat.setDescription(description);
-        return chat;
     }
 
     @Override

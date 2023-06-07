@@ -15,7 +15,9 @@ import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-
+/**
+ * Utility class for email operations.
+ */
 @Component
 public class EmailUtils {
     public static final Logger logger = LoggerFactory.getLogger(EmailUtils.class);

@@ -1,9 +1,7 @@
 package com.ra.chatapplication.socket;
 
 import com.google.gson.Gson;
-import com.ra.chatapplication.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
@@ -14,18 +12,26 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * WebSocket server endpoint for handling chat connections.
+ */
 @Slf4j
 @Component
 @ServerEndpoint("/websocket/{chatId}/{email}")
 public class ChatServerEndpoint extends TextWebSocketHandler {
 
-    @Autowired
-    private UserService userService;
-
+    /**
+     * A map to store active chats and their corresponding user sessions.
+     * The key is the chat ID, and the value is a map of user emails to their WebSocket sessions.
+     */
     public static final Map<Long, Map<String, Session>> CHATS = new ConcurrentHashMap<>();
 
     /**
-     * Triggered when connection is established
+     * Triggered when a WebSocket connection is established.
+     *
+     * @param chatId  The ID of the chat
+     * @param email   The email of the user
+     * @param session The WebSocket session of the client
      */
     @OnOpen
     public synchronized void onOpen(@PathParam("chatId") long chatId, @PathParam("email") String email, Session session) {
@@ -65,7 +71,11 @@ public class ChatServerEndpoint extends TextWebSocketHandler {
     }
 
     /**
-     * Triggered when the client receives data from the server
+     * Triggered when a message is received from a WebSocket client.
+     *
+     * @param chatId  The ID of the chat
+     * @param email   The email of the user
+     * @param message The received message
      */
     @OnMessage
     public synchronized void onMessage(@PathParam("chatId") long chatId, @PathParam("email") String email, String message) {
@@ -86,7 +96,10 @@ public class ChatServerEndpoint extends TextWebSocketHandler {
     }
 
     /**
-     * Triggered when connection is closed
+     * Triggered when a WebSocket connection is closed.
+     *
+     * @param chatId the ID of the chat
+     * @param email  the email of the user
      */
     @OnClose
     public synchronized void onClose(@PathParam("chatId") long chatId, @PathParam("email") String email) {
@@ -109,7 +122,11 @@ public class ChatServerEndpoint extends TextWebSocketHandler {
     }
 
     /**
-     * Triggered when a communication error occurs
+     * Triggered when a communication error occurs with a WebSocket connection.
+     *
+     * @param chatId    The ID of the chat
+     * @param session   The WebSocket session of the client
+     * @param throwable the thrown error
      */
     @OnError
     public synchronized void onError(@PathParam("chatId") long chatId, Session session, Throwable throwable) {

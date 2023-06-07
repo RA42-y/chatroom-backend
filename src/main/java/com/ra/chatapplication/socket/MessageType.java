@@ -1,5 +1,8 @@
 package com.ra.chatapplication.socket;
 
+/**
+ * Represents different types of messages received during Web Socket communication
+ */
 public class MessageType {
     public static final String JOIN = "join";
     public static final String ONLINE = "online";

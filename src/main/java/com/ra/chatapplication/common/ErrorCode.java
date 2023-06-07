@@ -1,6 +1,8 @@
 package com.ra.chatapplication.common;
 
-
+/**
+ * Error code enum
+ */
 public enum ErrorCode {
 
     SUCCESS(0, "ok", ""),
