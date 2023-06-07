@@ -72,6 +72,10 @@ public class User implements Serializable, UserDetails {
         this.admin = admin;
     }
 
+    public String getFullName(){
+        return firstName + " " + lastName;
+    }
+
 //    public User(String email, String password) {
 //        this.email = email;
 //        this.password = password;

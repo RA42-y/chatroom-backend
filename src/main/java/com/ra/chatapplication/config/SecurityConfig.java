@@ -51,6 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/**").hasRole("ADMIN") // Role-based authorization
 //                .antMatchers("/chat/**").hasRole("USER")
                 .antMatchers("/chat/**").permitAll()
+                .antMatchers("/websocket/**").permitAll()
 //                .anyRequest().authenticated()
                 .and()
             .formLogin()
@@ -91,54 +92,3 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 }
-
-
-//@Configuration
-//@EnableWebSecurity
-//public class SecurityConfig extends WebSecurityConfigurerAdapter {
-//
-//    @Autowired
-//    private CustomAuthenticationSuccessHandler authenticationSuccessHandler;
-//
-//
-//    @Autowired
-//    private CustomAuthenticationFailureHandler authenticationFailureHandler;
-//
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http
-//                .authorizeRequests()
-//                .antMatchers("/", "/login/**").permitAll()
-//                .antMatchers("/admin/**").permitAll()
-////                .antMatchers("/chat/**").permitAll()
-////                .antMatchers("/user/**").permitAll()
-//                .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources", "/configuration/security", "/swagger-ui.html",
-//                        "/webjars/**", "/swagger-resources/configuration/ui",
-//                        "/swagger-resources/configuration/security").permitAll()
-//                .antMatchers("/api/doc.html", "/api/**", "/doc.html").permitAll()
-//                .anyRequest().authenticated()
-//                .and()
-//                .formLogin()
-//                .loginPage("/login")
-//                .usernameParameter("email")
-////                .successForwardUrl("/admin/user-list")
-//                .failureHandler(authenticationFailureHandler)
-//                .successHandler(authenticationSuccessHandler)
-//                .permitAll()
-//                .and()
-//                .logout()
-//                .permitAll();
-//        // Disable CSRF protection for Swagger related URLs
-//        http.csrf().ignoringAntMatchers(
-//                "/v2/api-docs",
-//                "/configuration/ui",
-//                "/swagger-resources",
-//                "/configuration/security",
-//                "/swagger-ui.html",
-//                "/doc.html",
-//                "/webjars/**",
-//                "/swagger-resources/configuration/ui",
-//                "/swagger-resources/configuration/security"
-//        );
-//    }
-//}

@@ -1,92 +1,120 @@
 package com.ra.chatapplication.socket;
 
+import com.google.gson.Gson;
+import com.ra.chatapplication.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Slf4j //lombok jar包，帮我们自动生成一些代码：@Data
+@Slf4j
 @Component
-@ServerEndpoint("/websocket/{chatId}")
-public class ChatServerEndpoint {
-    public static final Map<String, Session> CLIENTS = new ConcurrentHashMap<>();
+@ServerEndpoint("/websocket/{chatId}/{email}")
+public class ChatServerEndpoint extends TextWebSocketHandler {
+
+    @Autowired
+    private UserService userService;
+
+    public static final Map<Long, Map<String, Session>> CHATS = new ConcurrentHashMap<>();
+
     /**
-     * 连接建立时触发
+     * Triggered when connection is established
      */
     @OnOpen
-    public synchronized void openSession(@PathParam("email") String email, Session session) {
-        String message = "[" + email + "]登录";
-        //存放到map集合中
-        CLIENTS.put(email,session);
-        //告诉自己当前在线的人数
-        Set<String> clients = CLIENTS.keySet();
-        clients.forEach(c -> {
-            try {
-                session.getBasicRemote().sendText("[" + c + "]登录");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+    public synchronized void onOpen(@PathParam("chatId") long chatId, @PathParam("email") String email, Session session) {
+        Map<String, Session> chat = CHATS.getOrDefault(chatId, new ConcurrentHashMap<>());
+        chat.put(email, session);
+        CHATS.put(chatId, chat);
+        System.out.println(email);
+        System.out.println(session);
+        System.out.println(CHATS);
+        System.out.println(chat);
+        Gson gson = new Gson();
 
-        //告诉所有人
-        CLIENTS.forEach((c,s) -> {
+        for (Map.Entry<String, Session> entry : chat.entrySet()) {
             try {
-                if (s != session)  //上面我已经告诉自己了  所以不能再告诉自己了
-                    s.getBasicRemote().sendText(message);
+                if (entry.getValue() != session) {
+                    System.out.println(entry.getKey());
+                    SocketTimestampedMessage msgOnline = new SocketTimestampedMessage(MessageType.ONLINE, entry.getKey());
+                    System.out.println(msgOnline);
+//                System.out.println(msgOnline.toJson());
+                    session.getBasicRemote().sendText(gson.toJson(msgOnline));
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        });
+        }
+
+        SocketTimestampedMessage msgJoin = new SocketTimestampedMessage(MessageType.JOIN, email);
+//        System.out.println(msgJoin);
+        for (Map.Entry<String, Session> entry : chat.entrySet()) {
+            try {
+                System.out.println(msgJoin);
+                entry.getValue().getBasicRemote().sendText(gson.toJson(msgJoin));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
-     * 客户端接收服务端数据时触发
+     * Triggered when the client receives data from the server
      */
     @OnMessage
-    public synchronized void onMessage(@PathParam("email") String email, String message) {
-        log.info("发送消息：{}, {}", email, message);
-        //告诉所有人发消息
-        String value = "["+email+"]:"+ message;
-        CLIENTS.forEach((u,s) -> {
+    public synchronized void onMessage(@PathParam("chatId") long chatId, @PathParam("email") String email, String message) {
+        Map<String, Session> chat = CHATS.get(chatId);
+
+        SocketTimestampedMessage msg = new SocketTimestampedMessage(MessageType.MESSAGE, email, message);
+        Gson gson = new Gson();
+
+        for (Map.Entry<String, Session> entry : chat.entrySet()) {
             try {
-                s.getBasicRemote().sendText(value);
+                System.out.println(msg);
+                entry.getValue().getBasicRemote().sendText(gson.toJson(msg));
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        });
+        }
     }
 
     /**
-     * 连接关闭时触发
+     * Triggered when connection is closed
      */
     @OnClose
-    public synchronized void onClose(@PathParam("email") String email, Session session) {
-        // 当前的Session移除某个用户
-        CLIENTS.remove(email);
-        //离开消息通知所有人有人离开了
-        CLIENTS.forEach((u,s) -> {
+    public synchronized void onClose(@PathParam("chatId") long chatId, @PathParam("email") String email) {
+        Map<String, Session> chat = CHATS.get(chatId);
+
+        chat.remove(email);
+
+        SocketTimestampedMessage msgLeave = new SocketTimestampedMessage(MessageType.LEAVE, email);
+        Gson gson = new Gson();
+
+        for (Map.Entry<String, Session> entry : chat.entrySet()) {
             try {
-                s.getBasicRemote().sendText("[" + email + "]离开");
+                System.out.println(msgLeave);
+                entry.getValue().getBasicRemote().sendText(gson.toJson(msgLeave));
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        });
+        }
     }
 
     /**
-     * 通信发生错误时触发
+     * Triggered when a communication error occurs
      */
     @OnError
-    public synchronized void onError(Session session, Throwable throwable) {
+    public synchronized void onError(@PathParam("chatId") long chatId, Session session, Throwable throwable) {
         try {
-            //关闭WebSocket Session会话
-            System.out.println("被摧毁");
+            System.out.println("close on error");
             session.close();
         } catch (IOException e) {
             e.printStackTrace();

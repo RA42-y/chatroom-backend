@@ -161,6 +161,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public User getUserByEmail(String email) {
+        System.out.println(email);
         return userRepository.findByEmailIgnoreCase(email);
     }
 
