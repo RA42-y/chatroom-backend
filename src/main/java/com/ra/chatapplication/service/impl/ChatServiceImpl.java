@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -98,16 +99,17 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public Chat createChat(String name, String description, User creator) {
-        Chat chat = new Chat(name, description, creator);
+    public Chat createChat(String name, String description, Date expireDate, User creator) {
+        Chat chat = new Chat(name, description, expireDate, creator);
         chatRepository.save(chat);
         return chat;
     }
 
     @Override
-    public void editChat(Chat chat, String name, String description) {
+    public void editChat(Chat chat, String name, String description, Date expireDate) {
         chat.setName(name);
         chat.setDescription(description);
+        chat.setExpireDate(expireDate);
     }
 
     @Override

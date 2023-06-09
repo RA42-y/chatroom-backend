@@ -56,12 +56,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and() // cross-origin
                 .csrf().disable() // for test only
                 .authorizeRequests()
+                .antMatchers("/css/**", "/images/**", "/assets/**").permitAll()
                 .antMatchers("/").permitAll()
                 .antMatchers("/login/**").permitAll()
                 .antMatchers("/admin/**").hasRole("ADMIN") // Role-based authorization
-                .antMatchers("/chat/**").hasRole("USER")
+//                .antMatchers("/chat/**").hasRole("USER")
+//                .antMatchers("/user/**").hasRole("USER")
+                .antMatchers("/chat/**").permitAll()
+                .antMatchers("/user/**").permitAll()
                 .antMatchers("/websocket/**").permitAll()
-                .anyRequest().authenticated()
+//                .anyRequest().authenticated()
                 .and()
                 .formLogin()
                 .loginPage("/login").permitAll()

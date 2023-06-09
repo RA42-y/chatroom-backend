@@ -24,7 +24,7 @@ import javax.servlet.http.HttpSession;
  * Base URL of the endpoint: http://localhost:8080/login
  */
 @Controller
-@RequestMapping(value = {"login"})
+@RequestMapping(value = {"login", "/"})
 @CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
 public class LoginController {
     @Resource

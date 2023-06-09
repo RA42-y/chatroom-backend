@@ -5,6 +5,7 @@ import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -56,7 +57,7 @@ public class Chat implements Serializable {
     /**
      * The date of expiration of the chat
      */
-    @Column
+    @Column(name = "expire_date")
     private Date expireDate;
 
     /**
@@ -74,7 +75,7 @@ public class Chat implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> members = new ArrayList<User>();
 
-    public Chat(String name, String description, User creator, Date expireDate) {
+    public Chat(String name, String description, Date expireDate, User creator) {
         this.name = name;
         this.description = description;
         this.creator = creator;

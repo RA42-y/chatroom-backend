@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -149,7 +150,11 @@ public class ChatController {
         if (loginUser == null) {
             throw new CustomException(ErrorCode.NOT_LOGIN);
         }
-        Chat chat = chatService.createChat(chatCreateRequest.getName(), chatCreateRequest.getDescription(), loginUser);
+        Date expireDate = chatCreateRequest.getExpireDate();
+        if (expireDate != null && expireDate.before(new Date())) {
+            throw new CustomException(ErrorCode.PARAMS_ERROR);
+        }
+        Chat chat = chatService.createChat(chatCreateRequest.getName(), chatCreateRequest.getDescription(), expireDate, loginUser);
         return ResultUtils.success(chat);
     }
 
@@ -202,7 +207,11 @@ public class ChatController {
             throw new CustomException(ErrorCode.PARAMS_ERROR);
         }
         if (chatService.isUserCreator(chat, loginUser)) {
-            chatService.editChat(chat, chatEditRequest.getName(), chatEditRequest.getDescription());
+            Date expireDate = chatEditRequest.getExpireDate();
+            if (expireDate != null && expireDate.before(new Date())) {
+                throw new CustomException(ErrorCode.PARAMS_ERROR);
+            }
+            chatService.editChat(chat, chatEditRequest.getName(), chatEditRequest.getDescription(), expireDate);
             chatService.saveChat(chat);
         } else {
             throw new CustomException(ErrorCode.NO_AUTH);

@@ -4,6 +4,7 @@ import com.ra.chatapplication.model.entity.Chat;
 import com.ra.chatapplication.model.entity.User;
 import org.springframework.data.domain.Page;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -117,8 +118,9 @@ public interface ChatService {
      * @param chat        The chat to edit
      * @param name        The new name of the chat
      * @param description The new description of the chat
+     * @param expireDate  The date of expiration of the chat
      */
-    void editChat(Chat chat, String name, String description);
+    void editChat(Chat chat, String name, String description, Date expireDate);
 
     /**
      * Creates a new chat.
@@ -128,7 +130,7 @@ public interface ChatService {
      * @param creator     The user who creates the chat
      * @return The created Chat object
      */
-    Chat createChat(String name, String description, User creator);
+    Chat createChat(String name, String description, Date expireDate, User creator);
 
     /**
      * Checks if a user is the creator of a chat.

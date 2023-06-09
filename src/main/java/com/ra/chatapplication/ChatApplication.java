@@ -10,11 +10,15 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 @SpringBootApplication
 @EnableJpaAuditing
 public class ChatApplication {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
 //        SpringApplication.run(ChatApplication.class, args);
 
         ConfigurableApplicationContext run = SpringApplication.run(ChatApplication.class, args);
@@ -33,9 +37,16 @@ public class ChatApplication {
         User u10 = userService.createUser("Samantha", "Brown", "samanthabrown@example.com", "mypassword10", true);
         User u11 = userService.createUser("William", "Jones", "williamjones@example.com", "mypassword11", false);
 
-        Chat c1 = chatService.createChat("Chat 1", "Chat created by user 1", u1);
-        Chat c2 = chatService.createChat("Chat 2", "Chat created by user 2", u2);
-        Chat c3 = chatService.createChat("Chat 3", "Chat created by user 3", u3);
+//        Date expirationDate = new Date(); // Set your desired expiration date here
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Date expirationDate = dateFormat.parse("01/01/2024 00:00:00");
+
+
+// Create the chats with the provided expiration date
+        Chat c1 = chatService.createChat("Chat 1", "Chat created by user 1", expirationDate, u1);
+        Chat c2 = chatService.createChat("Chat 2", "Chat created by user 2", expirationDate, u2);
+        Chat c3 = chatService.createChat("Chat 3", "Chat created by user 3", expirationDate, u3);
 
         chatService.addMemberToChat(c1, u4);
         chatService.addMemberToChat(c1, u5);
@@ -54,7 +65,7 @@ public class ChatApplication {
 
         chatService.saveChat(c3);
 
-        Chat c4 = chatService.createChat("Chat 4", "Chat created by user 1", u1);
+        Chat c4 = chatService.createChat("Chat 4", "Chat created by user 1", expirationDate, u1);
 
         chatService.addMemberToChat(c4, u7);
         chatService.addMemberToChat(c4, u8);
