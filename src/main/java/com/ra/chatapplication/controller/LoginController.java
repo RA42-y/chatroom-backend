@@ -143,12 +143,27 @@ public class LoginController {
     }
 
 
+    /**
+     * Displays the forgot password page.
+     *
+     * @param model The model to hold user's email
+     * @return The view name for the forgot password page
+     */
     @GetMapping("forgot-password")
     public String getForgotPassword(Model model) {
         model.addAttribute("userForgotPasswordRequest", new UserForgotPasswordRequest());
+        model.addAttribute("firstInfo", true);
         return "login/forgot-password";
     }
 
+    /**
+     * Handles the submission of the forgot password form.
+     *
+     * @param userForgotPasswordRequest The UserForgotPasswordRequest object containing the user's email
+     * @param model                     The model to hold the result data
+     * @param ra                        The RedirectAttributes to add flash attributes
+     * @return The view name for the forgot password page
+     */
     @PostMapping("forgot-password")
     public String postForgotPassword(@ModelAttribute UserForgotPasswordRequest userForgotPasswordRequest, Model model, RedirectAttributes ra) {
         User user = userService.getUserByEmail(userForgotPasswordRequest.getEmail());
@@ -163,11 +178,11 @@ public class LoginController {
     }
 
     /**
-     * Displays the form for resetting password.
+     * Displays the reset forgot password page.
      *
-     * @param model   The model to hold the login form
-     * @param request The HttpServletRequest object containing the user's request
-     * @return The view name for resetting password.
+     * @param token The jwt token
+     * @param model The model to hold the data
+     * @return The view name for the reset forgot password page
      */
     @GetMapping("reset-forgot-password")
     public String getResetForgotPassword(@RequestParam("token") String token, Model model) {
@@ -179,8 +194,17 @@ public class LoginController {
         return "login/reset-forgot-password";
     }
 
+    /**
+     * Handles the submission of the reset forgot password form.
+     *
+     * @param token                    The jwt token
+     * @param userResetPasswordRequest The UserResetPasswordRequest object containing the new password
+     * @param ra                       The RedirectAttributes to add flash attributes
+     * @param model                    The model to hold the result data
+     * @return The redirect URL for the login page or the view name for the reset forgot password page if email is invalid
+     */
     @PostMapping("reset-forgot-password")
-    public String postResetForgotPassword(@RequestParam("token") String token,@ModelAttribute UserResetPasswordRequest userResetPasswordRequest, RedirectAttributes ra, Model model) {
+    public String postResetForgotPassword(@RequestParam("token") String token, @ModelAttribute UserResetPasswordRequest userResetPasswordRequest, RedirectAttributes ra, Model model) {
         User user = userService.getUserResetPasswordByToken(token);
         if (userResetPasswordRequest.getPasswordNew().equals(userResetPasswordRequest.getPasswordValidation())) {
             user.setPassword(passwordEncoder.encode(userResetPasswordRequest.getPasswordNew()));

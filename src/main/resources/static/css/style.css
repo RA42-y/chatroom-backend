@@ -9,3 +9,12 @@ body {
     padding: 5em 5em;
     margin: 0 auto;
 }
+
+.message{
+    width: 40em;
+    position: fixed;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    margin: -2em 0;
+}

@@ -11,6 +11,7 @@
 
     <!--    <link rel="stylesheet" th:href="@{https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css}"/>-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 <div th:replace="admin/layout::message-icon"></div>
@@ -20,7 +21,7 @@
 <div class="container-fluid mt-4" style="display: flex">
     <aside th:replace="admin/layout::aside"></aside>
     <main class="col-md-9">
-        <div th:if="${createUserSuccess != null}" class="message" style="width: 40em; margin: 0 auto;">
+        <div th:if="${createUserSuccess != null}" class="message">
             <div th:if="${createUserSuccess}" class="alert alert-success fade show mt-3" role="alert">
                 <div class="d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center">
