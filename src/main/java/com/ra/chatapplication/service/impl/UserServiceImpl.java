@@ -183,7 +183,21 @@ public class UserServiceImpl implements UserService {
             return null;
         }
         String token = jwtUtils.extractTokenFromRequest(request);
-        jwtUtils.validateJwtToken(token); // Validate the token before processing the request
+        jwtUtils.validateJwtToken(token);
+        String email = jwtUtils.getUserNameFromJwtToken(token);
+        User currentUser = userRepository.findByEmailIgnoreCase(email);
+        if (currentUser == null) {
+            throw new CustomException(ErrorCode.NOT_LOGIN);
+        }
+        return currentUser;
+    }
+
+    @Override
+    public User getUserResetPasswordByToken(String token) {
+        if (token == null) {
+            return null;
+        }
+        jwtUtils.validateJwtToken(token);
         String email = jwtUtils.getUserNameFromJwtToken(token);
         User currentUser = userRepository.findByEmailIgnoreCase(email);
         if (currentUser == null) {

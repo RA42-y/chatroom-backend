@@ -28,6 +28,9 @@ public class EmailUtils {
     @Resource
     private TemplateEngine templateEngine;
 
+    @Resource
+    private JwtUtils jwtUtils;
+
     @Value("${spring.mail.username}")
     private String from;
 
@@ -56,7 +59,19 @@ public class EmailUtils {
         String content = templateEngine.process("email/default-password-email", context);
         System.out.println(content);
 
-        sendMail(user.getEmail(), "Welcome to Chatroom - Your Default Password", content);
+        sendMail(user.getEmail(), "[Chatroom] Welcome - Your Default Password", content);
+    }
+
+    public void sendResetForgotPasswordHtmlMail(User user) {
+        String token = jwtUtils.generateJwtToken(user.getEmail());
+        Context context = new Context();
+        context.setVariable("user", user);
+        context.setVariable("token", token);
+
+        String content = templateEngine.process("email/reset-forgot-password-email", context);
+        System.out.println(content);
+
+        sendMail(user.getEmail(), "[Chatroom] Reset your chatroom password", content);
     }
 }
 

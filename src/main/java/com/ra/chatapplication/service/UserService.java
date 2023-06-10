@@ -171,6 +171,8 @@ public interface UserService {
      */
     User getLoginUserByToken(HttpServletRequest request);
 
+    User getUserResetPasswordByToken(String token);
+
     /**
      * Compares a raw password with an encoded password.
      *

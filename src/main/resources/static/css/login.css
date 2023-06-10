@@ -1,0 +1,11 @@
+body {
+    background: whitesmoke;
+}
+
+.center-form{
+    background: white;
+    border-radius: 30px;
+    box-shadow: 0 2px 8px lightgray;
+    padding: 5em 5em;
+    margin: 0 auto;
+}

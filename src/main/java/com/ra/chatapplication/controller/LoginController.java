@@ -2,9 +2,11 @@ package com.ra.chatapplication.controller;
 
 
 import com.ra.chatapplication.model.entity.User;
+import com.ra.chatapplication.model.request.UserForgotPasswordRequest;
 import com.ra.chatapplication.model.request.UserLoginRequest;
 import com.ra.chatapplication.model.request.UserResetPasswordRequest;
 import com.ra.chatapplication.service.UserService;
+import com.ra.chatapplication.utils.EmailUtils;
 import com.ra.chatapplication.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -35,6 +37,9 @@ public class LoginController {
 
     @Autowired
     private JwtUtils jwtUtils;
+
+    @Autowired
+    private EmailUtils emailUtils;
 
     /**
      * Displays the form for logging in.
@@ -134,6 +139,58 @@ public class LoginController {
         } else {
             model.addAttribute("invalid", true);
             return "login/reset-password";
+        }
+    }
+
+
+    @GetMapping("forgot-password")
+    public String getForgotPassword(Model model) {
+        model.addAttribute("userForgotPasswordRequest", new UserForgotPasswordRequest());
+        return "login/forgot-password";
+    }
+
+    @PostMapping("forgot-password")
+    public String postForgotPassword(@ModelAttribute UserForgotPasswordRequest userForgotPasswordRequest, Model model, RedirectAttributes ra) {
+        User user = userService.getUserByEmail(userForgotPasswordRequest.getEmail());
+        if (user == null) {
+            model.addAttribute("invalidEmail", true);
+            return "login/forgot-password";
+        }
+        emailUtils.sendResetForgotPasswordHtmlMail(user);
+        model.addAttribute("sentForgotPasswordEmail", true);
+        model.addAttribute("userEmail", user.getEmail());
+        return "login/forgot-password";
+    }
+
+    /**
+     * Displays the form for resetting password.
+     *
+     * @param model   The model to hold the login form
+     * @param request The HttpServletRequest object containing the user's request
+     * @return The view name for resetting password.
+     */
+    @GetMapping("reset-forgot-password")
+    public String getResetForgotPassword(@RequestParam("token") String token, Model model) {
+        User user = userService.getUserResetPasswordByToken(token);
+        System.out.println(user.getEmail());
+        model.addAttribute("user", user);
+        model.addAttribute("userResetPasswordRequest", new UserResetPasswordRequest());
+        model.addAttribute("token", token);
+        return "login/reset-forgot-password";
+    }
+
+    @PostMapping("reset-forgot-password")
+    public String postResetForgotPassword(@RequestParam("token") String token,@ModelAttribute UserResetPasswordRequest userResetPasswordRequest, RedirectAttributes ra, Model model) {
+        User user = userService.getUserResetPasswordByToken(token);
+        if (userResetPasswordRequest.getPasswordNew().equals(userResetPasswordRequest.getPasswordValidation())) {
+            user.setPassword(passwordEncoder.encode(userResetPasswordRequest.getPasswordNew()));
+            user.setFirstLogin(false);
+            userService.saveUser(user);
+            ra.addFlashAttribute("resetForgotPassword", true);
+            return "redirect:/login";
+        } else {
+            model.addAttribute("invalid", true);
+            return "login/reset-forgot-password";
         }
     }
 
