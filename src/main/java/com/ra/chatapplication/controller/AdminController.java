@@ -1,12 +1,15 @@
 package com.ra.chatapplication.controller;
 
 
+import com.ra.chatapplication.common.ErrorCode;
+import com.ra.chatapplication.exception.CustomException;
 import com.ra.chatapplication.model.entity.Chat;
 import com.ra.chatapplication.model.entity.User;
 import com.ra.chatapplication.model.request.AdminCreateUserRequest;
 import com.ra.chatapplication.model.request.AdminEditUserRequest;
 import com.ra.chatapplication.service.ChatService;
 import com.ra.chatapplication.service.UserService;
+import com.ra.chatapplication.utils.JwtUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +18,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -30,6 +36,9 @@ public class AdminController {
 
     @Resource
     ChatService chatService;
+
+    @Resource
+    private JwtUtils jwtUtils;
 
     /**
      * Retrieves a paginated list of all users for display in the user list page.
@@ -231,5 +240,38 @@ public class AdminController {
             ra.addFlashAttribute("failedUserId", userId);
         }
         return "redirect:/admin/user-list";
+    }
+
+    /**
+     * Redirect admin user from admin page to Chatroom page.
+     *
+     * @param request  The HttpServletRequest object containing the user's request
+     * @param response The HttpServletResponse object to redirect user
+     */
+    @GetMapping("to-chatroom")
+    public void getToChatroom(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        User user = userService.getLoginUser(request);
+        if (user == null) {
+            throw new CustomException(ErrorCode.NOT_LOGIN);
+        } else {
+            String token = jwtUtils.generateJwtToken();
+            response.sendRedirect("http://localhost:3000/chats?token=" + token);
+        }
+    }
+
+    /**
+     * Redirect admin user from admin page to API documentation page.
+     *
+     * @param request  The HttpServletRequest object containing the user's request
+     * @param response The HttpServletResponse object to redirect user
+     */
+    @GetMapping("to-api-documentation")
+    public void getToApiDocumentation(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        User user = userService.getLoginUser(request);
+        if (user == null) {
+            throw new CustomException(ErrorCode.NOT_LOGIN);
+        } else {
+            response.sendRedirect("http://localhost:8080/doc.html#/home");
+        }
     }
 }
