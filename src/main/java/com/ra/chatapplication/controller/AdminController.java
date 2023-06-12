@@ -174,8 +174,10 @@ public class AdminController {
         if (user != null) {
             List<Chat> chatsCreated = chatService.getChatsCreatedByUser(user);
             for (Chat c : chatsCreated) {
+                chatService.removeAllUsersFromChat(c);
                 chatService.removeCreator(c);
                 chatService.saveChat(c);
+                chatService.deleteChat(c);
             }
             List<Chat> chatsJoined = chatService.getChatsJoinedByUser(user);
             for (Chat c : chatsJoined) {
