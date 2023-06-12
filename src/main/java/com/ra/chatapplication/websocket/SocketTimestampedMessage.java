@@ -1,4 +1,4 @@
-package com.ra.chatapplication.socket;
+package com.ra.chatapplication.websocket;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;

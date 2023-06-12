@@ -1,10 +1,14 @@
-package com.ra.chatapplication.socket;
+package com.ra.chatapplication.websocket;
 
 import com.google.gson.Gson;
+import com.ra.chatapplication.model.entity.User;
+import com.ra.chatapplication.service.UserService;
+import com.ra.chatapplication.utils.EmailUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import javax.annotation.Resource;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
@@ -26,6 +30,9 @@ public class ChatServerEndpoint extends TextWebSocketHandler {
      */
     public static final Map<Long, Map<String, Session>> CHATS = new ConcurrentHashMap<>();
 
+    @Resource
+    private UserService userService;
+
     /**
      * Triggered when a WebSocket connection is established.
      *
@@ -37,6 +44,8 @@ public class ChatServerEndpoint extends TextWebSocketHandler {
     public synchronized void onOpen(@PathParam("chatId") long chatId, @PathParam("email") String email, Session session) {
         Map<String, Session> chat = CHATS.getOrDefault(chatId, new ConcurrentHashMap<>());
         chat.put(email, session);
+        User user = userService.getUserByEmail(email);
+        System.out.println(user);
         CHATS.put(chatId, chat);
         System.out.println(email);
         System.out.println(session);
@@ -50,7 +59,6 @@ public class ChatServerEndpoint extends TextWebSocketHandler {
                     System.out.println(entry.getKey());
                     SocketTimestampedMessage msgOnline = new SocketTimestampedMessage(MessageType.ONLINE, entry.getKey());
                     System.out.println(msgOnline);
-//                System.out.println(msgOnline.toJson());
                     session.getBasicRemote().sendText(gson.toJson(msgOnline));
                 }
             } catch (IOException e) {
@@ -59,7 +67,6 @@ public class ChatServerEndpoint extends TextWebSocketHandler {
         }
 
         SocketTimestampedMessage msgJoin = new SocketTimestampedMessage(MessageType.JOIN, email);
-//        System.out.println(msgJoin);
         for (Map.Entry<String, Session> entry : chat.entrySet()) {
             try {
                 System.out.println(msgJoin);

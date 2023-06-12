@@ -1,4 +1,4 @@
-package com.ra.chatapplication.socket;
+package com.ra.chatapplication.websocket;
 
 /**
  * Represents different types of messages received during Web Socket communication
