@@ -61,19 +61,13 @@ public class Chat implements Serializable {
     private Date expireDate;
 
     /**
-     * The last modified date time of the chat
-     */
-    @LastModifiedDate
-    private Date lastModifiedDate;
-
-    /**
      * The list of users added in the chat as member
      */
     @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(name = "chat_user",
             joinColumns = @JoinColumn(name = "chat_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private List<User> members = new ArrayList<User>();
+    private List<User> members = new ArrayList<>();
 
     public Chat(String name, String description, Date expireDate, User creator) {
         this.name = name;

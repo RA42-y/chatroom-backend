@@ -99,6 +99,13 @@ public interface ChatService {
     void removeUserFromChat(Chat chat, User user);
 
     /**
+     * Removes all users from a chat.
+     *
+     * @param chat The chat to remove the users from
+     */
+    void removeAllUsersFromChat(Chat chat);
+
+    /**
      * Saves a chat.
      *
      * @param chat The chat to save

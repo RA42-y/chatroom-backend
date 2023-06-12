@@ -177,6 +177,9 @@ public class ChatController {
             throw new CustomException(ErrorCode.PARAMS_ERROR);
         }
         if (chatService.isUserCreator(chat, loginUser)) {
+            chatService.removeAllUsersFromChat(chat);
+            chatService.removeCreator(chat);
+            chatService.saveChat(chat);
             chatService.deleteChat(chat);
         } else {
             throw new CustomException(ErrorCode.NO_AUTH);
