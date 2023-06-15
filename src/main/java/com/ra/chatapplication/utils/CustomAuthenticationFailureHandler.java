@@ -29,20 +29,25 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
         System.out.println(email + " failed.");
         User user = userService.getUserByEmail(email);
         if (user != null) {
-            int failureTimes = user.getFailureTimes() + 1;
-            user.setFailureTimes(failureTimes);
-            userService.saveUser(user);
-            System.out.println(email + " failed attempts: " + failureTimes);
-            if (failureTimes > 3) {
-                if (user.isActive()) {
-                    userService.deactivateUser(user);
-                }
-                System.out.println("Account blacked after " + failureTimes + " attempts failed.");
+            if (!user.isActive()){
                 super.setDefaultFailureUrl("/login?blocked");
                 super.onAuthenticationFailure(request, response, exception);
             } else {
-                super.setDefaultFailureUrl("/login?error");
-                super.onAuthenticationFailure(request, response, exception);
+                int failureTimes = user.getFailureTimes() + 1;
+                user.setFailureTimes(failureTimes);
+                userService.saveUser(user);
+                System.out.println(email + " failed attempts: " + failureTimes);
+                if (failureTimes > 3) {
+                    if (user.isActive()) {
+                        userService.deactivateUser(user);
+                    }
+                    System.out.println("Account blacked after " + failureTimes + " attempts failed.");
+                    super.setDefaultFailureUrl("/login?blocked");
+                    super.onAuthenticationFailure(request, response, exception);
+                } else {
+                    super.setDefaultFailureUrl("/login?error");
+                    super.onAuthenticationFailure(request, response, exception);
+                }
             }
         } else {
             super.setDefaultFailureUrl("/login?error");
