@@ -127,6 +127,10 @@ public class LoginController {
                 model.addAttribute("invalidNotChanged", true);
                 return "login/reset-password";
             }
+            if (userResetPasswordRequest.getPasswordNew().length()<8) {
+                model.addAttribute("invalid", true);
+                return "login/reset-password";
+            }
             loginUser.setPassword(passwordEncoder.encode(userResetPasswordRequest.getPasswordNew()));
             loginUser.setFirstLogin(false);
             userService.saveUser(loginUser);
@@ -207,6 +211,10 @@ public class LoginController {
     public String postResetForgotPassword(@RequestParam("token") String token, @ModelAttribute UserResetPasswordRequest userResetPasswordRequest, RedirectAttributes ra, Model model) {
         User user = userService.getUserResetPasswordByToken(token);
         if (userResetPasswordRequest.getPasswordNew().equals(userResetPasswordRequest.getPasswordValidation())) {
+            if (userResetPasswordRequest.getPasswordNew().length()<8) {
+                model.addAttribute("invalid", true);
+                return "login/reset-forgot-password";
+            }
             user.setPassword(passwordEncoder.encode(userResetPasswordRequest.getPasswordNew()));
             user.setFirstLogin(false);
             userService.saveUser(user);
